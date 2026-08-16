@@ -1,1 +1,1080 @@
-audit/index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Recruiter Intelligence Suite — RIS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --navy:       #0D1B2A;
+    --navy-mid:   #132438;
+    --navy-light: #1C3350;
+    --teal:       #0A9B8A;
+    --teal-light: #7ECFC8;
+    --teal-glow:  #0ECFB8;
+    --green-dark: #0F3D2E;
+    --green-mid:  #164D3A;
+    --green-card: #1A5242;
+    --offwhite:   #EDF4F3;
+    --muted:      #8AAAB8;
+    --border:     rgba(10,155,138,0.25);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--navy);
+    color: var(--offwhite);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ─── TYPOGRAPHY ─── */
+  h1, h2, h3, h4 { font-family: 'Playfair Display', serif; line-height: 1.2; }
+
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--teal-light);
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(13,27,42,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .nav-logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--teal);
+    letter-spacing: 0.1em;
+  }
+  .nav-links { display: flex; gap: 2rem; }
+  .nav-links a {
+    font-size: 0.8rem; color: var(--muted); text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--teal-light); }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: 100px 2rem 60px;
+  }
+
+  /* Radar rings — the signature element */
+  .radar {
+    position: absolute;
+    right: -80px; top: 50%;
+    transform: translateY(-50%);
+    width: 600px; height: 600px;
+    pointer-events: none;
+  }
+  .radar-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(10,155,138,0.15);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .radar-ring:nth-child(1) { width: 120px; height: 120px; border-color: rgba(10,155,138,0.5); }
+  .radar-ring:nth-child(2) { width: 240px; height: 240px; }
+  .radar-ring:nth-child(3) { width: 370px; height: 370px; }
+  .radar-ring:nth-child(4) { width: 500px; height: 500px; }
+  .radar-ring:nth-child(5) { width: 620px; height: 620px; }
+
+  .radar-pulse {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid var(--teal);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 120px; height: 120px;
+    animation: pulse 3.5s ease-out infinite;
+    opacity: 0;
+  }
+  .radar-pulse:nth-child(6) { animation-delay: 0s; }
+  .radar-pulse:nth-child(7) { animation-delay: 1.2s; }
+  .radar-pulse:nth-child(8) { animation-delay: 2.4s; }
+
+  @keyframes pulse {
+    0%   { transform: translate(-50%,-50%) scale(0); opacity: 0.8; }
+    100% { transform: translate(-50%,-50%) scale(5); opacity: 0; }
+  }
+
+  .radar-dot {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--teal);
+    box-shadow: 0 0 20px var(--teal), 0 0 40px rgba(10,155,138,0.4);
+  }
+
+  .hero-content {
+    position: relative; z-index: 2;
+    max-width: 680px;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 1.2rem;
+    line-height: 1.1;
+  }
+  .hero h1 span { color: var(--teal); }
+
+  .hero-sub {
+    font-size: 1.1rem;
+    color: var(--muted);
+    margin-bottom: 2rem;
+    max-width: 540px;
+  }
+
+  .hero-callout {
+    background: linear-gradient(135deg, rgba(10,155,138,0.12), rgba(15,61,46,0.3));
+    border-left: 3px solid var(--teal);
+    border-radius: 0 8px 8px 0;
+    padding: 1.2rem 1.5rem;
+    font-size: 0.95rem;
+    color: var(--offwhite);
+    margin-bottom: 2.4rem;
+    line-height: 1.6;
+  }
+
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: var(--teal);
+    color: #fff;
+    font-weight: 600; font-size: 0.9rem;
+    padding: 0.8rem 1.8rem;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .btn-primary:hover { background: var(--teal-glow); transform: translateY(-1px); }
+
+  /* ─── SECTION LAYOUTS ─── */
+  section { padding: 80px 2rem; }
+
+  .container { max-width: 1100px; margin: 0 auto; }
+
+  .section-header { margin-bottom: 3rem; }
+  .section-header h2 { font-size: clamp(1.8rem, 3vw, 2.6rem); color: #fff; margin-top: 0.5rem; }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(to right, var(--teal), transparent);
+    margin: 0 0 80px;
+    opacity: 0.4;
+  }
+
+  /* ─── WHAT IS RIS ─── */
+  .what-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+  @media (max-width: 768px) { .what-grid { grid-template-columns: 1fr; } }
+
+  .what-text p { color: var(--muted); margin-bottom: 1rem; font-size: 1.05rem; }
+  .what-text p strong { color: var(--offwhite); }
+
+  .stat-block {
+    background: var(--green-dark);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+  }
+  .stat {
+    text-align: center;
+    padding: 1rem;
+    border-radius: 8px;
+    background: rgba(10,155,138,0.06);
+  }
+  .stat-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2rem; font-weight: 600;
+    color: var(--teal);
+    display: block;
+  }
+  .stat-label { font-size: 0.78rem; color: var(--muted); }
+
+  /* ─── WHO IT'S FOR ─── */
+  .who-section { background: var(--green-dark); }
+
+  .who-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+  .who-card {
+    background: var(--green-mid);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.8rem;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .who-card:hover { border-color: var(--teal); transform: translateY(-3px); }
+
+  .who-icon {
+    font-size: 1.8rem; margin-bottom: 1rem;
+  }
+  .who-card h3 {
+    font-size: 1.1rem; color: var(--teal-light);
+    margin-bottom: 0.8rem;
+  }
+  .who-card ul { list-style: none; }
+  .who-card ul li {
+    font-size: 0.85rem; color: var(--muted);
+    padding: 0.3rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .who-card ul li::before { content: '→'; color: var(--teal); font-size: 0.75rem; }
+
+  /* ─── COMPATIBILITY ─── */
+  .compat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  .compat-card {
+    background: var(--navy-mid);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.4rem;
+  }
+  .compat-card h4 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600; font-size: 0.85rem;
+    color: var(--teal-light);
+    margin-bottom: 0.8rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .compat-card p { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+
+  /* ─── OUTPUTS ─── */
+  .outputs-section { background: var(--green-dark); }
+
+  .output-list { display: flex; flex-direction: column; gap: 1rem; }
+  .output-item {
+    display: flex; gap: 1.5rem; align-items: flex-start;
+    background: var(--green-mid);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.4rem;
+    transition: border-color 0.2s;
+  }
+  .output-item:hover { border-color: var(--teal); }
+  .output-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.4rem; font-weight: 600;
+    color: var(--teal);
+    min-width: 2.5rem;
+    line-height: 1;
+    margin-top: 3px;
+  }
+  .output-item h4 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600; font-size: 0.95rem;
+    color: var(--offwhite); margin-bottom: 0.3rem;
+  }
+  .output-item p { font-size: 0.85rem; color: var(--muted); }
+
+  /* ─── CASE STUDIES ─── */
+  .cases-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+  .case-card {
+    background: var(--navy-mid);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--teal);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .case-header {
+    padding: 1.2rem 1.5rem;
+    display: flex; align-items: center; gap: 1rem;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .case-header:hover { background: rgba(10,155,138,0.06); }
+  .case-tag {
+    font-size: 0.7rem;
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--teal);
+    color: #fff;
+    padding: 0.2rem 0.6rem;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .case-title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600; font-size: 0.92rem;
+    color: var(--offwhite);
+    flex: 1;
+  }
+  .case-arrow { color: var(--teal); font-size: 0.8rem; transition: transform 0.2s; }
+  .case-body {
+    padding: 0 1.5rem;
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.35s ease, padding 0.2s;
+  }
+  .case-body.open { max-height: 400px; padding-bottom: 1.4rem; }
+  .case-header.open .case-arrow { transform: rotate(90deg); }
+  .case-body p { font-size: 0.85rem; color: var(--muted); line-height: 1.7; }
+  .case-metric {
+    margin-top: 0.8rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--teal-light);
+    background: rgba(10,155,138,0.08);
+    border-radius: 4px;
+    padding: 0.5rem 0.8rem;
+  }
+
+  /* ─── ENGINE MAP ─── */
+  .engine-section { background: var(--navy); }
+
+  .engine-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.2rem;
+  }
+  .engine-card {
+    background: var(--green-dark);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.6rem;
+    transition: border-color 0.2s, transform 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .engine-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--teal), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .engine-card:hover { border-color: var(--teal); transform: translateY(-2px); }
+  .engine-card:hover::before { opacity: 1; }
+
+  .engine-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    background: rgba(10,155,138,0.15);
+    color: var(--teal);
+    padding: 0.2rem 0.6rem;
+    border-radius: 3px;
+    display: inline-block;
+    margin-bottom: 0.8rem;
+  }
+  .engine-card h3 {
+    font-size: 1rem; color: #fff; margin-bottom: 0.5rem;
+  }
+  .engine-card p { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+  .engine-when {
+    margin-top: 1rem;
+    font-size: 0.78rem;
+    color: var(--teal-light);
+    border-top: 1px solid var(--border);
+    padding-top: 0.8rem;
+    font-style: italic;
+  }
+
+  .engine-callout {
+    margin-top: 2rem;
+    background: linear-gradient(135deg, rgba(10,155,138,0.1), rgba(15,61,46,0.3));
+    border-left: 3px solid var(--teal);
+    border-radius: 0 8px 8px 0;
+    padding: 1.2rem 1.5rem;
+    font-size: 0.9rem;
+    color: var(--offwhite);
+  }
+
+  /* ─── WHY DIFFERENT ─── */
+  .diff-section { background: var(--green-dark); }
+
+  .diff-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+  @media (max-width: 768px) { .diff-grid { grid-template-columns: 1fr; } }
+
+  .diff-card {
+    background: var(--green-mid);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 2rem;
+  }
+  .diff-emoji { font-size: 2rem; margin-bottom: 1rem; display: block; }
+  .diff-card h3 { font-size: 1.1rem; color: #fff; margin-bottom: 0.8rem; }
+  .diff-card p { font-size: 0.87rem; color: var(--muted); line-height: 1.7; }
+
+  /* ─── FAQ ─── */
+  .faq-section { background: var(--navy); }
+
+  .faq-list { max-width: 780px; margin: 0 auto; display: flex; flex-direction: column; gap: 0.8rem; }
+  .faq-item {
+    background: var(--navy-mid);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .faq-q {
+    padding: 1.2rem 1.5rem;
+    display: flex; justify-content: space-between; align-items: center;
+    cursor: pointer;
+    font-weight: 600; font-size: 0.92rem;
+    color: var(--offwhite);
+    gap: 1rem;
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .faq-q:hover { background: rgba(10,155,138,0.06); }
+  .faq-icon {
+    color: var(--teal); font-size: 1.2rem; font-weight: 300;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .faq-q.open .faq-icon { transform: rotate(45deg); }
+  .faq-a {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  .faq-a.open { max-height: 300px; }
+  .faq-a p {
+    padding: 0 1.5rem 1.2rem;
+    font-size: 0.87rem; color: var(--muted); line-height: 1.7;
+  }
+
+  /* ─── NOTION PROMPT SECTION ─── */
+  .notion-section { background: var(--navy-light); }
+
+  .notion-box {
+    background: var(--navy);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 2rem;
+    position: relative;
+  }
+  .notion-box pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    white-space: pre-wrap;
+    word-break: break-word;
+    line-height: 1.7;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  .copy-btn {
+    position: absolute; top: 1rem; right: 1rem;
+    background: var(--teal);
+    color: #fff;
+    font-size: 0.75rem; font-weight: 600;
+    border: none; border-radius: 4px;
+    padding: 0.4rem 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .copy-btn:hover { background: var(--teal-glow); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--navy);
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+  footer span { color: var(--teal); }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--navy); }
+  ::-webkit-scrollbar-thumb { background: var(--teal); border-radius: 3px; }
+
+  /* ─── ANIMATIONS ─── */
+  .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s, transform 0.6s; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">RIS // Recruiter Intelligence Suite</div>
+  <div class="nav-links">
+    <a href="#who">Who It's For</a>
+    <a href="#outputs">Outputs</a>
+    <a href="#engines">Engines</a>
+    <a href="#cases">Case Studies</a>
+    <a href="#faq">FAQ</a>
+    <a href="audit/">Trust Decay Audit</a>
+    <a href="comp-curve/">Comp Curve Diagnostic</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="radar" aria-hidden="true">
+    <div class="radar-ring"></div>
+    <div class="radar-ring"></div>
+    <div class="radar-ring"></div>
+    <div class="radar-ring"></div>
+    <div class="radar-ring"></div>
+    <div class="radar-pulse"></div>
+    <div class="radar-pulse"></div>
+    <div class="radar-pulse"></div>
+    <div class="radar-dot"></div>
+  </div>
+  <div class="hero-content">
+    <div class="eyebrow" style="margin-bottom:1rem;">v2.0 — Multi-Engine AI Framework</div>
+    <h1>The Intelligence Layer<br/>Recruiters <span>Never Had</span></h1>
+    <p class="hero-sub">RIS is not a job board. Not an ATS. It's the decision layer that scores candidates, flags deal risk, validates authenticity, and generates placement-ready intelligence — before a single interview is booked.</p>
+    <div class="hero-callout">
+      "RIS encodes veteran recruiter judgment into structured AI engines. Every output is scored, reasoned, and ready to act on. Not a paragraph of observations you still have to interpret yourself."
+    </div>
+    <a href="audit/" class="btn-primary">Take the Trust Decay Audit ↓</a>
+  </div>
+</section>
+
+<!-- WHAT IS RIS -->
+<section id="what">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="eyebrow">Overview</div>
+      <h2>What Is RIS?</h2>
+    </div>
+    <div class="what-grid fade-in">
+      <div class="what-text">
+        <p>The Recruiter Intelligence Suite is a <strong>multi-engine AI framework</strong> that encodes veteran recruiter judgment into structured prompts and scoring systems. It works on top of the tools you already use — ATS, LinkedIn, email — and produces scored, actionable output at every stage of the hiring process.</p>
+        <p>RIS is not software to install. There is no integration, no onboarding ticket, no IT approval. It is an <strong>intelligence layer applied to real recruiting workflows</strong>. Paste the prompt. Feed it the job brief and the candidate. Get a scored output in under three minutes.</p>
+        <p>Eight engines. One framework. Every placement decision backed by structure, not gut feeling.</p>
+      </div>
+      <div class="stat-block">
+        <div class="stat"><span class="stat-num">8</span><span class="stat-label">AI Engines</span></div>
+        <div class="stat"><span class="stat-num">&lt;3min</span><span class="stat-label">Output Time</span></div>
+        <div class="stat"><span class="stat-num">100%</span><span class="stat-label">No New Software</span></div>
+        <div class="stat"><span class="stat-num">∞</span><span class="stat-label">Roles. Any Sector.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- WHO IT'S FOR -->
+<section class="who-section" id="who">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="eyebrow">Users</div>
+      <h2>Who It's For</h2>
+    </div>
+    <div class="who-grid fade-in">
+      <div class="who-card">
+        <div class="who-icon">🎯</div>
+        <h3>Recruiters</h3>
+        <ul>
+          <li>Candidate screening</li>
+          <li>Interview preparation</li>
+          <li>Shortlisting & ranking</li>
+        </ul>
+      </div>
+      <div class="who-card">
+        <div class="who-icon">🏗️</div>
+        <h3>Hiring Managers</h3>
+        <ul>
+          <li>Team hiring decisions</li>
+          <li>Internal recruitment planning</li>
+        </ul>
+      </div>
+      <div class="who-card">
+        <div class="who-icon">🏢</div>
+        <h3>Agencies</h3>
+        <ul>
+          <li>Client submission packs</li>
+          <li>Candidate comparison reports</li>
+        </ul>
+      </div>
+      <div class="who-card">
+        <div class="who-icon">📋</div>
+        <h3>HR Teams</h3>
+        <ul>
+          <li>Talent acquisition workflows</li>
+          <li>Hiring risk management</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- COMPATIBILITY -->
+<section id="compat">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="eyebrow">Integrations</div>
+      <h2>What RIS Works With</h2>
+    </div>
+    <div class="compat-grid fade-in">
+      <div class="compat-card">
+        <h4>⚙️ ATS Platforms</h4>
+        <p>Greenhouse, Lever, Workable, Bullhorn, Recruitee</p>
+      </div>
+      <div class="compat-card">
+        <h4>💬 Communication</h4>
+        <p>Email, Slack, LinkedIn InMail</p>
+      </div>
+      <div class="compat-card">
+        <h4>📄 Data Sources</h4>
+        <p>Resumes (PDF/Word), LinkedIn profiles, job descriptions, screening notes</p>
+      </div>
+      <div class="compat-card">
+        <h4>🤖 AI Interfaces</h4>
+        <p>Claude, ChatGPT, Gemini, Copilot — any prompt-compatible AI tool</p>
+      </div>
+      <div class="compat-card">
+        <h4>📊 Output Formats</h4>
+        <p>Scored reports, shortlists, interview packs, risk assessments, offer briefs</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- OUTPUTS -->
+<section class="outputs-section" id="outputs">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="eyebrow">Deliverables</div>
+      <h2>Outputs You Can Actually Use</h2>
+    </div>
+    <div class="output-list fade-in">
+      <div class="output-item">
+        <div class="output-num">01</div>
+        <div>
+          <h4>Candidate Scores</h4>
+          <p>Numeric fit scores with reasoning tied directly to the job brief — not a summary you have to interpret.</p>
+        </div>
+      </div>
+      <div class="output-item">
+        <div class="output-num">02</div>
+        <div>
+          <h4>Deal Health Reports</h4>
+          <p>Placement risk flags with intervention windows and recruiter scripts before the deal goes cold.</p>
+        </div>
+      </div>
+      <div class="output-item">
+        <div class="output-num">03</div>
+        <div>
+          <h4>Interview Intelligence Packs</h4>
+          <p>Structured question sets per candidate, per role, with red flag indicators built in.</p>
+        </div>
+      </div>
+      <div class="output-item">
+        <div class="output-num">04</div>
+        <div>
+          <h4>Authenticity Validation Flags</h4>
+          <p>Signals that separate genuine candidates from resume inflation — before the interview, not after.</p>
+        </div>
+      </div>
+      <div class="output-item">
+        <div class="output-num">05</div>
+        <div>
+          <h4>Offer Recommendations</h4>
+          <p>Compensation guidance and offer acceptance probability scores before any number goes to the candidate.</p>
+        </div>
+      </div>
+      <div class="output-item">
+        <div class="output-num">06</div>
+        <div>
+          <h4>ATS Compatibility Reports</h4>
+          <p>Keyword and format gap analysis between a resume and the job description — instant submission readiness check.</p>
+        </div>
+      </div>
+      <div class="output-item">
+        <div class="output-num">07</div>
+        <div>
+          <h4>Shortlist Narratives</h4>
+          <p>Client-ready candidate comparison summaries you can paste directly into your submission email.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CASE STUDIES -->
+<section id="cases">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="eyebrow">Case Studies</div>
+      <h2>RIS in the Field</h2>
+    </div>
+    <div class="cases-grid fade-in">
+
+      <div class="case-card">
+        <div class="case-header" onclick="toggleCase(this)">
+          <span class="case-tag">Recruiter</span>
+          <span class="case-title">Candidate Screening</span>
+          <span class="case-arrow">▶</span>
+        </div>
+        <div class="case-body">
+          <p>A recruiter receives 47 applicants for a SaaS Account Executive role in 72 hours. Using the Candidate Scoring Framework, RIS ranks all 47 against a weighted brief in under 10 minutes — surfacing the top 6 with explanations. The recruiter skips the manual pile and books first-round calls the same day.</p>
+          <div class="case-metric">⏱ Time saved: 4 hours · Placement risk: reduced immediately</div>
+        </div>
+      </div>
+
+      <div class="case-card">
+        <div class="case-header" onclick="toggleCase(this)">
+          <span class="case-tag">Recruiter</span>
+          <span class="case-title">Interview Prep</span>
+          <span class="case-arrow">▶</span>
+        </div>
+        <div class="case-body">
+          <p>Before a technical screen for a DevOps Engineer, the recruiter runs the Interview Intelligence Prompt against the candidate's resume and the JD. RIS outputs 12 role-specific questions with probing follow-ups and red flag indicators. The recruiter walks into the call prepared — not guessing.</p>
+          <div class="case-metric">📋 12 structured questions · Red flags surfaced pre-call</div>
+        </div>
+      </div>
+
+      <div class="case-card">
+        <div class="case-header" onclick="toggleCase(this)">
+          <span class="case-tag">Recruiter</span>
+          <span class="case-title">Shortlisting</span>
+          <span class="case-arrow">▶</span>
+        </div>
+        <div class="case-body">
+          <p>A client requests a top-3 shortlist from a pool of 18. The recruiter feeds all 18 resumes into the Candidate Scoring Framework. RIS scores each, highlights skills gaps, and generates a narrative comparison summary ready to paste directly into the client email.</p>
+          <div class="case-metric">⚡ Submission turnaround: under 2 hours</div>
+        </div>
+      </div>
+
+      <div class="case-card">
+        <div class="case-header" onclick="toggleCase(this)">
+          <span class="case-tag">Hiring Manager</span>
+          <span class="case-title">Team Hiring</span>
+          <span class="case-arrow">▶</span>
+        </div>
+        <div class="case-body">
+          <p>A VP of Engineering needs two senior engineers without pulling HR into every screen. They use RIS to define a weighted scoring brief, run candidate scores independently, and receive a Hiring Risk Assessment before extending offers. The hire happens faster with less back-and-forth.</p>
+          <div class="case-metric">🎯 Faster hiring · Documented decision trail</div>
+        </div>
+      </div>
+
+      <div class="case-card">
+        <div class="case-header" onclick="toggleCase(this)">
+          <span class="case-tag">Hiring Manager</span>
+          <span class="case-title">Internal Recruitment</span>
+          <span class="case-arrow">▶</span>
+        </div>
+        <div class="case-body">
+          <p>An operations manager is backfilling a role internally and needs to compare three internal candidates fairly. RIS scores each against the same brief, removing bias and creating a documented decision trail HR can reference and defend if challenged.</p>
+          <div class="case-metric">⚖️ Bias removed · Auditable scoring record</div>
+        </div>
+      </div>
+
+      <div class="case-card">
+        <div class="case-header" onclick="toggleCase(this)">
+          <span class="case-tag">Agency</span>
+          <span class="case-title">Client Submissions</span>
+          <span class="case-arrow">▶</span>
+        </div>
+        <div class="case-body">
+          <p>A boutique agency submits candidates to a Series B startup. Using RIS shortlist narratives, every submission includes a scored comparison, deal health flag, and offer recommendation. The client receives intelligence, not just CVs — and submission win rate improves measurably.</p>
+          <div class="case-metric">📈 Higher submission win rate · Premium client positioning</div>
+        </div>
+      </div>
+
+      <div class="case-card">
+        <div class="case-header" onclick="toggleCase(this)">
+          <span class="case-tag">Agency</span>
+          <span class="case-title">Candidate Comparison</span>
+          <span class="case-arrow">▶</span>
+        </div>
+        <div class="case-body">
+          <p>An agency has two strong finalists for a CFO role. Both go through the Candidate Scoring Framework side by side. RIS surfaces the delta — one scores higher on track record alignment, the other on cultural signals. The agency makes a confident recommendation backed by data, not instinct alone.</p>
+          <div class="case-metric">🔍 Clear delta identified · Data-backed recommendation</div>
+        </div>
+      </div>
+
+      <div class="case-card">
+        <div class="case-header" onclick="toggleCase(this)">
+          <span class="case-tag">HR Team</span>
+          <span class="case-title">Talent Acquisition Workflows</span>
+          <span class="case-arrow">▶</span>
+        </div>
+        <div class="case-body">
+          <p>An HR team managing 12 open roles simultaneously uses the Recruiter Operating Manual to build a repeatable intake-to-offer workflow. Each role gets a deal health score at intake, a scoring brief at screening, and a risk assessment before offer. Hiring velocity improves in the first quarter of use.</p>
+          <div class="case-metric">📊 30% faster hiring velocity · Repeatable workflow across 12 roles</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ENGINE MAP -->
+<section class="engine-section" id="engines">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="eyebrow">Component Overview</div>
+      <h2>Recruiter Intelligence Engine</h2>
+    </div>
+    <div class="engine-grid fade-in">
+
+      <div class="engine-card">
+        <div class="engine-badge">ENGINE 01</div>
+        <h3>Candidate Scoring Framework</h3>
+        <p>Scores candidates numerically against a weighted job brief with clear reasoning at every point.</p>
+        <div class="engine-when">Use when: Screening & shortlisting</div>
+      </div>
+
+      <div class="engine-card">
+        <div class="engine-badge">ENGINE 02</div>
+        <h3>Interview Intelligence Prompt</h3>
+        <p>Generates structured, role-specific interview questions with probing follow-ups and red flag indicators.</p>
+        <div class="engine-when">Use when: Before every screen or interview</div>
+      </div>
+
+      <div class="engine-card">
+        <div class="engine-badge">ENGINE 03</div>
+        <h3>Hiring Risk Assessment Prompt</h3>
+        <p>Flags placement failure risks across candidate, client, and role dimensions before they become real problems.</p>
+        <div class="engine-when">Use when: Before submitting or offering</div>
+      </div>
+
+      <div class="engine-card">
+        <div class="engine-badge">ENGINE 04</div>
+        <h3>Offer Recommendation Engine</h3>
+        <p>Scores compensation fit and predicts offer acceptance probability before any number goes to the candidate.</p>
+        <div class="engine-when">Use when: Before extending any offer</div>
+      </div>
+
+      <div class="engine-card">
+        <div class="engine-badge">ENGINE 05</div>
+        <h3>ATS Compatibility Analyzer</h3>
+        <p>Identifies keyword and format gaps between a resume and job description for instant submission readiness.</p>
+        <div class="engine-when">Use when: Resume review & submission prep</div>
+      </div>
+
+      <div class="engine-card">
+        <div class="engine-badge">ENGINE 06</div>
+        <h3>Signal Intelligence Layer</h3>
+        <p>Extracts intent signals from client and candidate behavior to predict deal trajectory and flag drift early.</p>
+        <div class="engine-when">Use when: Mid-process deal management</div>
+      </div>
+
+      <div class="engine-card">
+        <div class="engine-badge">ENGINE 07</div>
+        <h3>Recruiter Operating Manual</h3>
+        <p>End-to-end workflow guide for using all RIS engines across a full placement cycle from intake to offer.</p>
+        <div class="engine-when">Use when: Onboarding & process setup</div>
+      </div>
+
+      <div class="engine-card">
+        <div class="engine-badge">ENGINE 08</div>
+        <h3>Quick Start Guide</h3>
+        <p>Fast-path instructions to run your first RIS diagnostic in under 15 minutes with any live role.</p>
+        <div class="engine-when">Use when: Day one</div>
+      </div>
+
+    </div>
+    <div class="engine-callout fade-in">
+      Every engine in RIS is designed to work independently or in sequence. Run one. Run all eight. The output is always structured, scored, and ready to act on.
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- WHY DIFFERENT -->
+<section class="diff-section" id="why">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="eyebrow">Differentiation</div>
+      <h2>What Makes This Different</h2>
+    </div>
+    <div class="diff-grid fade-in">
+      <div class="diff-card">
+        <span class="diff-emoji">🧠</span>
+        <h3>Veteran Judgment, Encoded</h3>
+        <p>Most tools surface data. RIS encodes the decision-making framework of experienced recruiters — the questions they ask, the risks they flag, the signals they trust — and makes it available on every deal, regardless of who's running it.</p>
+      </div>
+      <div class="diff-card">
+        <span class="diff-emoji">⚡</span>
+        <h3>No New Software</h3>
+        <p>RIS runs inside the AI tools you already use. No integration, no onboarding, no IT ticket. Paste the prompt, feed it the inputs, get a scored output in under three minutes. It is a framework, not a platform.</p>
+      </div>
+      <div class="diff-card">
+        <span class="diff-emoji">📊</span>
+        <h3>Scored, Not Summarised</h3>
+        <p>Every RIS output includes a numeric score with reasoning — not a paragraph of observations you still have to interpret yourself. The decision is structured. The next action is clear. The risk is already flagged.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <div class="container">
+    <div class="section-header fade-in" style="text-align:center;">
+      <div class="eyebrow">FAQ</div>
+      <h2>Frequently Asked Questions</h2>
+    </div>
+    <div class="faq-list fade-in">
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          What AI tools does RIS work with?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">
+          <p>RIS prompts are compatible with any large language model including Claude, ChatGPT, Gemini, and Microsoft Copilot. No specific tool is required — if you can paste text and read an output, you can use RIS.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Do I need to be a technical recruiter to use this?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">
+          <p>No. RIS is written for working recruiters. The prompts are plain language. The outputs are plain language. If you can paste text and read a scored output, you can use RIS from day one.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          How long does it take to get a result?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">
+          <p>Most RIS engines return a full scored output in under 3 minutes when given a complete job description and resume. The Quick Start Guide gets you a live diagnostic in under 15 minutes on your first use.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Can I use RIS for retained and contingency search?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">
+          <p>Yes. The scoring and risk frameworks apply to both models. The Deal Health Engine is particularly useful for retained mandates where placement failure carries higher financial cost and the intervention window is narrower.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Can agencies white-label RIS for their clients?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">
+          <p>Enterprise licensing is available. Contact for details on white-label arrangements, custom engine configuration, and team onboarding packages.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          How does RIS handle confidential client data?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">
+          <p>RIS prompts are designed to work with anonymised inputs. No data is stored by the framework itself — output lives wherever you paste it. You control what goes in and what comes out.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Is this a one-time purchase or a subscription?
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">
+          <p>Pricing details available on request. Contact for access options including individual licenses and team packages.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>Recruiter Intelligence Suite &nbsp;·&nbsp; <span>RIS v2.0</span> &nbsp;·&nbsp; Built for agency recruiters who can't afford to guess</p>
+</footer>
+
+<script>
+  // Toggle case studies
+  function toggleCase(header) {
+    const body = header.nextElementSibling;
+    const isOpen = body.classList.contains('open');
+    // Close all
+    document.querySelectorAll('.case-body').forEach(b => b.classList.remove('open'));
+    document.querySelectorAll('.case-header').forEach(h => h.classList.remove('open'));
+    if (!isOpen) {
+      body.classList.add('open');
+      header.classList.add('open');
+    }
+  }
+
+  // Toggle FAQ
+  function toggleFaq(q) {
+    const answer = q.nextElementSibling;
+    const isOpen = answer.classList.contains('open');
+    document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('open'));
+    document.querySelectorAll('.faq-q').forEach(q => q.classList.remove('open'));
+    if (!isOpen) {
+      answer.classList.add('open');
+      q.classList.add('open');
+    }
+  }
+
+  // Scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
