@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Pipeline Trust Decay Audit™ · Recruiter Intelligence Suite</title>
+<style>
+:root{--bg:#080e17;--surf:#0d1b2a;--bord:#1a2e40;--teal:#0d7d72;--tdim:rgba(13,125,114,.14);--tbord:rgba(13,125,114,.35);--gold:#c9933a;--gdim:rgba(201,147,58,.12);--red:#dc2626;--rdim:rgba(220,38,38,.12);--purple:#7c3aed;--green:#16a34a;--orange:#f97316;--text:#e2e8f0;--muted:#94a3b8;--dim:#475569;--faint:#1e3a50}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;min-height:100vh}
+[hidden]{display:none!important}
+button{cursor:pointer;font-family:inherit}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--surf)}::-webkit-scrollbar-thumb{background:var(--bord);border-radius:3px}
+
+/* COVER */
+#cover{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;position:relative}
+.c-eye{font-size:10px;font-weight:700;letter-spacing:.2em;color:var(--teal);font-family:monospace;margin-bottom:20px}
+.c-title{font-size:clamp(28px,7vw,44px);font-weight:900;line-height:1.15;letter-spacing:-.03em;margin-bottom:12px}
+.c-sub{font-size:16px;color:var(--muted);line-height:1.75;max-width:460px;margin-bottom:8px}
+.c-meta{font-size:13px;color:var(--dim);margin-bottom:40px}
+.tag-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:46px}
+.tag{border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;border:1px solid}
+.btn-p{background:var(--teal);color:#fff;border:none;border-radius:8px;padding:14px 36px;font-size:14px;font-weight:700;letter-spacing:.06em;margin-bottom:14px;display:block;width:200px;margin-left:auto;margin-right:auto}
+.btn-s{background:transparent;border:1px solid var(--bord);color:var(--dim);border-radius:6px;padding:8px 18px;font-size:12px}
+.btn-row{display:flex;gap:12px;justify-content:center}
+.c-foot{position:absolute;bottom:20px;font-size:10px;color:var(--faint);font-family:monospace;letter-spacing:.1em}
+
+/* HEADER */
+#hdr{background:var(--surf);border-bottom:1px solid var(--bord);padding:14px 24px;position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between}
+.hdr-eye{font-size:9px;font-weight:700;letter-spacing:.16em;color:var(--teal);font-family:monospace;margin-bottom:2px}
+.hdr-title{font-size:16px;font-weight:800;letter-spacing:-.01em}
+.btn-back{background:transparent;border:1px solid var(--bord);color:var(--dim);border-radius:6px;padding:6px 14px;font-size:11px}
+
+/* TABS */
+#tabs{background:var(--surf);border-bottom:1px solid var(--bord);display:flex;padding:0 24px}
+.tb{padding:13px 20px;border:none;border-bottom:2px solid transparent;background:transparent;color:var(--dim);font-size:12px;font-weight:700;letter-spacing:.08em;font-family:monospace;transition:color .15s,border-color .15s}
+.tb.on{color:var(--teal);border-bottom-color:var(--teal)}
+
+/* CONTENT */
+#cnt{max-width:920px;margin:0 auto;padding:28px 24px}
+.sec{display:none}.sec.on{display:block}
+
+/* SHARED */
+.lbl{font-size:10px;font-weight:700;letter-spacing:.14em;color:var(--teal);font-family:monospace;margin-bottom:8px}
+.lbl.d{color:var(--dim)}
+.card{background:var(--surf);border:1px solid var(--bord);border-radius:8px;padding:22px 24px;margin-bottom:16px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:16px}
+
+/* MECHANISMS */
+.mc{background:var(--surf);border:1px solid var(--bord);border-radius:8px;padding:18px}
+.mh{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.mi{font-size:20px}
+.mn{font-size:13px;font-weight:700}
+.mk{font-size:10px;font-weight:700;font-family:monospace}
+.md{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:10px}
+.mf{background:var(--bg);border-radius:4px;padding:6px 10px;font-family:monospace;font-size:11px;color:var(--dim);margin-bottom:8px}
+.mm{font-size:11px;color:var(--dim);margin-bottom:3px}
+.mm b{font-weight:600}
+
+/* STAGES */
+.sr{background:var(--surf);border:1px solid var(--bord);border-radius:0 8px 8px 0;padding:16px 20px;display:flex;gap:20px;align-items:flex-start;margin-bottom:10px}
+.sn{font-size:26px;font-weight:800;font-family:monospace;line-height:1}
+.sd{font-size:9px;color:var(--dim);font-family:monospace;margin-top:3px;text-align:center}
+.st{font-size:14px;font-weight:700;margin-bottom:4px}
+.sb{font-size:12px;color:var(--muted);line-height:1.65;margin-bottom:8px}
+.sm{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:6px;font-size:11px;color:var(--dim)}
+.sf{font-size:11px;color:var(--teal);font-style:italic}
+
+/* METRICS */
+.mt{background:var(--surf);border:1px solid var(--bord);border-radius:8px;overflow:hidden;margin-bottom:20px}
+.mr{padding:14px 20px;border-bottom:1px solid var(--bord);display:flex;gap:16px;align-items:flex-start}
+.mr:last-child{border-bottom:none}
+.mb{flex-shrink:0;background:var(--tdim);border:1px solid var(--tbord);border-radius:4px;padding:5px 10px;font-family:monospace;font-size:11px;font-weight:700;color:var(--teal);min-width:44px;text-align:center}
+
+/* CHART */
+.chart-wrap{background:var(--surf);border:1px solid var(--bord);border-radius:8px;padding:22px 20px;margin-bottom:16px}
+.leg{display:flex;gap:20px;flex-wrap:wrap;margin-top:12px}
+.li{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
+.ll{width:24px;height:2px;border-radius:1px;display:inline-block}
+
+/* LOOP */
+.loop{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:14px}
+.ln{border-radius:6px;padding:10px 14px;text-align:center;min-width:100px;border:1px solid var(--bord);background:var(--bg)}
+.ln.hi{background:var(--rdim);border-color:var(--red)}
+.lnl{font-size:12px;font-weight:700}
+.lns{font-size:10px;color:var(--dim);margin-top:2px}
+.la{color:var(--faint);font-size:18px}
+
+/* AUDIT */
+.ah{background:var(--surf);border:1px solid var(--tbord);border-radius:8px;padding:16px 22px;margin-bottom:22px;display:flex;justify-content:space-between;align-items:center}
+.ac-num{font-size:28px;font-weight:800;font-family:monospace;line-height:1;color:var(--bord);transition:color .3s}
+.ac-num.rdy{color:var(--teal)}
+.ac-lbl{font-size:9px;font-family:monospace;color:var(--dim)}
+.cc{background:var(--surf);border:1px solid var(--bord);border-radius:8px;padding:20px 22px;margin-bottom:14px}
+.ch{display:flex;gap:12px;align-items:flex-start;margin-bottom:18px}
+.ci{font-size:22px}
+.cn{font-size:14px;font-weight:700}
+.ck{font-size:10px;font-weight:700;font-family:monospace;margin-bottom:2px}
+.cd{font-size:12px;color:var(--dim);margin-top:2px}
+.q{margin-bottom:18px}
+.q:last-child{margin-bottom:0}
+.qt{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:8px}
+.or{display:flex;flex-wrap:wrap;gap:6px}
+.ob{padding:6px 13px;border-radius:4px;font-size:11px;background:transparent;border:1px solid var(--bord);color:var(--dim);transition:all .12s}
+.sub{width:100%;padding:14px;border:none;border-radius:8px;font-size:13px;font-weight:700;letter-spacing:.06em;background:var(--faint);color:var(--dim);cursor:not-allowed;margin-top:4px;transition:background .2s,color .2s}
+.sub.rdy{background:var(--teal);color:#fff;cursor:pointer}
+
+/* RESULTS */
+#res{display:none}
+.sc{background:var(--surf);border:2px solid var(--bord);border-radius:8px;padding:32px;margin-bottom:18px;text-align:center;transition:border-color .4s}
+.sn2{font-size:80px;font-weight:900;font-family:monospace;line-height:1;margin-bottom:10px;transition:color .4s}
+.sz{font-size:22px;font-weight:700;margin-bottom:14px}
+.sdsc{font-size:14px;color:var(--muted);line-height:1.75;max-width:480px;margin:0 auto}
+.bg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.bc{background:var(--surf);border:1px solid var(--bord);border-radius:8px;padding:16px 18px}
+.bh{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.bp{font-size:24px;font-weight:800;font-family:monospace}
+.bb{background:var(--bg);border-radius:4px;height:6px;overflow:hidden}
+.bbr{height:100%;border-radius:4px}
+.ac2{background:var(--surf);border:1px solid var(--bord);border-radius:8px;padding:20px 22px;margin-bottom:14px}
+.ar{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px}
+.ar:last-child{margin-bottom:0}
+.an{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--tdim);border:1px solid var(--tbord);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--teal);font-family:monospace;line-height:1}
+.at{font-size:13px;color:var(--muted);line-height:1.65;padding-top:2px}
+.uc{background:var(--surf);border:1px solid var(--tbord);border-radius:8px;padding:16px 22px;margin-bottom:14px}
+.ul{font-size:11px;font-weight:700;color:var(--teal);font-family:monospace;margin-bottom:6px}
+.ut{font-size:13px;color:var(--muted);line-height:1.7}
+.uh{font-size:11px;color:var(--dim);margin-top:8px;font-style:italic}
+.retake{padding:9px 18px;background:transparent;border:1px solid var(--bord);border-radius:6px;color:var(--dim);font-size:12px}
+
+footer{border-top:1px solid var(--bord);padding:16px 24px;text-align:center;margin-top:20px}
+.ft{font-size:10px;color:var(--faint);font-family:monospace;letter-spacing:.1em}
+</style>
+</head>
+<body>
+
+<a href="../" style="position:fixed;top:14px;left:18px;z-index:50;font-family:monospace;font-size:11px;letter-spacing:.08em;color:var(--dim,#8AAAB8);text-decoration:none;border:1px solid rgba(143,182,175,0.25);padding:5px 10px;border-radius:4px;">&larr; RIS</a>
+
+<!-- COVER -->
+<div id="cover">
+  <div class="c-eye">RECRUITER INTELLIGENCE SUITE</div>
+  <h1 class="c-title">Pipeline Trust Decay<br><span style="color:var(--teal)">Audit&#8482;</span></h1>
+  <p class="c-sub">A diagnostic framework for measuring and reversing candidate trust erosion in hiring systems.</p>
+  <p class="c-meta">13 questions &nbsp;&#183;&nbsp; 5 minutes &nbsp;&#183;&nbsp; Instant scoring &nbsp;&#183;&nbsp; No login required</p>
+  <div class="tag-row">
+    <div class="tag" style="color:var(--teal);border-color:var(--tbord)">Information Return</div>
+    <div class="tag" style="color:var(--purple);border-color:rgba(124,58,237,.4)">Decision Memory</div>
+    <div class="tag" style="color:var(--gold);border-color:rgba(201,147,58,.4)">Trust Measurement</div>
+    <div class="tag" style="color:var(--red);border-color:rgba(220,38,38,.4)">Signal Quality</div>
+  </div>
+  <button class="btn-p" onclick="openApp('audit')">START AUDIT &#8594;</button>
+  <div class="btn-row">
+    <button class="btn-s" onclick="openApp('fw')">View Framework</button>
+    <button class="btn-s" onclick="openApp('vis')">View Decay Curve</button>
+  </div>
+  <div class="c-foot">THE REVENUE AUTOPSY &nbsp;&#183;&nbsp; RECRUITER INTELLIGENCE SUITE &nbsp;&#183;&nbsp; 2026</div>
+</div>
+
+<!-- APP -->
+<div id="app" hidden>
+  <header id="hdr">
+    <div>
+      <div class="hdr-eye">RECRUITER INTELLIGENCE SUITE</div>
+      <div class="hdr-title">Pipeline Trust Decay Model&#8482;</div>
+    </div>
+    <button class="btn-back" onclick="goBack()">&#8592; Cover</button>
+  </header>
+  <nav id="tabs">
+    <button class="tb on" id="t-fw"    onclick="sw('fw')">01 &#183; FRAMEWORK</button>
+    <button class="tb"    id="t-vis"   onclick="sw('vis')">02 &#183; DECAY CURVE</button>
+    <button class="tb"    id="t-audit" onclick="sw('audit')">03 &#183; AUDIT TOOL</button>
+  </nav>
+  <div id="cnt">
+
+    <!-- FRAMEWORK -->
+    <section id="s-fw" class="sec on">
+      <div class="card" style="border-color:var(--tbord)">
+        <div class="lbl">DEFINITION</div>
+        <p style="font-size:15px;color:var(--muted);line-height:1.8;margin-bottom:12px">The <strong style="color:var(--text)">Pipeline Trust Decay Model&#8482;</strong> measures the rate at which candidate and talent market trust erodes as a direct consequence of information asymmetry in hiring pipelines.</p>
+        <p style="font-size:15px;color:var(--muted);line-height:1.8">It quantifies the compounding organizational cost of one-directional information flow &#8212; and provides a structured protocol for reversing it before the damage becomes permanent.</p>
+      </div>
+      <div style="background:var(--gdim);border:1px solid rgba(201,147,58,.35);border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:18px 22px;margin-bottom:28px">
+        <div class="lbl" style="color:var(--gold)">THE TRUST ASYMMETRY LAW</div>
+        <p style="font-size:15px;line-height:1.8;margin-bottom:10px;font-style:italic">&#8220;In any hiring pipeline where information flows primarily inward without corresponding outward flow, trust decays at an accelerating rate. This decay is not linear &#8212; it follows a compounding curve that becomes increasingly costly to reverse.&#8221;</p>
+        <p style="font-size:12px;color:var(--dim)">Corollary: The cost of reducing candidate uncertainty today is always lower than the cost of recovering trust tomorrow.</p>
+      </div>
+      <div class="lbl d" style="margin-bottom:14px">FOUR DECAY MECHANISMS</div>
+      <div class="g2">
+        <div class="mc" style="border-top:3px solid var(--red)"><div class="mh"><span class="mi">&#128225;</span><div><div class="mn">Signal Inflation</div><div class="mk" style="color:var(--red)">SII</div></div></div><div class="md">Systematic dilution of candidate signal quality caused by uncertainty-driven application behavior. When candidates cannot predict outcomes, they apply indiscriminately &#8212; making qualified applicants statistically indistinguishable from unqualified ones.</div><div class="mf">Qualified Applications &#247; Total Applications</div><div class="mm"><b style="color:var(--red)">Cause:</b> Absent outbound communication</div><div class="mm"><b style="color:var(--red)">Effect:</b> Recruiter screening efficiency collapses</div></div>
+        <div class="mc" style="border-top:3px solid var(--purple)"><div class="mh"><span class="mi">&#128260;</span><div><div class="mn">Decision Debt</div><div class="mk" style="color:var(--purple)">DDR</div></div></div><div class="md">Accumulated redundant evaluative work created when prior hiring decisions are not converted into reusable organizational knowledge. Each undocumented decision becomes future duplicate labor.</div><div class="mf">Returning Pipeline Entries &#247; Total Pipeline Entries</div><div class="mm"><b style="color:var(--purple)">Cause:</b> ATS used as storage, not knowledge infrastructure</div><div class="mm"><b style="color:var(--purple)">Effect:</b> Recruiters solve the same problems every cycle</div></div>
+        <div class="mc" style="border-top:3px solid var(--gold)"><div class="mh"><span class="mi">&#128201;</span><div><div class="mn">Trust Depreciation</div><div class="mk" style="color:var(--gold)">TDR</div></div></div><div class="md">Progressive erosion of employer brand equity when candidate experiences are negative, undocumented, or unaddressed. Trust depreciation is cumulative and does not reverse without deliberate intervention.</div><div class="mf">Negative Interactions &#247; Total Candidate Interactions</div><div class="mm"><b style="color:var(--gold)">Cause:</b> No candidate experience measurement</div><div class="mm"><b style="color:var(--gold)">Effect:</b> Future pipeline quality and response rates decline</div></div>
+        <div class="mc" style="border-top:3px solid var(--teal)"><div class="mh"><span class="mi">&#128279;</span><div><div class="mn">Referral Leakage</div><div class="mk" style="color:var(--teal)">RLR</div></div></div><div class="md">Invisible reduction in future talent access caused by ignored candidates removing themselves and their networks from an organization&#8217;s referral ecosystem. The highest-value cost &#8212; never measured, compounds indefinitely.</div><div class="mf">Proxy: Referral rate trend over 4+ quarters</div><div class="mm"><b style="color:var(--teal)">Cause:</b> Zero feedback to non-hired candidates</div><div class="mm"><b style="color:var(--teal)">Effect:</b> Top-of-funnel quality deteriorates invisibly quarter over quarter</div></div>
+      </div>
+      <div class="lbl d" style="margin-bottom:14px">FOUR DECAY STAGES</div>
+      <div class="sr" style="border-left:4px solid var(--green)"><div style="flex-shrink:0;text-align:center;min-width:54px"><div class="sn" style="color:var(--green)">01</div><div class="sd">0&#8211;7 days</div></div><div><div class="st">Latent Decay</div><div class="sb">Uncertainty present but tolerated. Candidate engaged and focused on your role.</div><div class="sm"><span>Trust: <strong style="color:var(--green)">85&#8211;100%</strong></span><span>Cost: Low</span></div><div class="sf">&#8627; One acknowledgment email with expected timeline stops decay before it starts.</div></div></div>
+      <div class="sr" style="border-left:4px solid var(--gold)"><div style="flex-shrink:0;text-align:center;min-width:54px"><div class="sn" style="color:var(--gold)">02</div><div class="sd">7&#8211;21 days</div></div><div><div class="st">Active Decay</div><div class="sb">Trust erodes. Candidate begins hedging &#8212; applying to competing roles to reduce uncertainty.</div><div class="sm"><span>Trust: <strong style="color:var(--gold)">45&#8211;85%</strong></span><span>Cost: Moderate</span></div><div class="sf">&#8627; A status update with revised timeline. Under 30 seconds to send. Arrests decay immediately.</div></div></div>
+      <div class="sr" style="border-left:4px solid var(--orange)"><div style="flex-shrink:0;text-align:center;min-width:54px"><div class="sn" style="color:var(--orange)">03</div><div class="sd">21&#8211;45 days</div></div><div><div class="st">Accelerated Decay</div><div class="sb">The Ghost Threshold is crossed. Candidate behavior toward this employer shifts permanently.</div><div class="sm"><span>Trust: <strong style="color:var(--orange)">10&#8211;45%</strong></span><span>Cost: High</span></div><div class="sf">&#8627; Requires direct outreach, honest acknowledgment, and a visible process change to begin recovery.</div></div></div>
+      <div class="sr" style="border-left:4px solid var(--red);margin-bottom:28px"><div style="flex-shrink:0;text-align:center;min-width:54px"><div class="sn" style="color:var(--red)">04</div><div class="sd">45+ days</div></div><div><div class="st">Terminal Decay</div><div class="sb">Market-level damage. Negative experiences shared publicly via Glassdoor, LinkedIn, peer networks.</div><div class="sm"><span>Trust: <strong style="color:var(--red)">&lt;10%</strong></span><span>Cost: Compounding</span></div><div class="sf">&#8627; Sustained employer brand repair required over 6&#8211;12 months minimum. No quick fix exists.</div></div></div>
+      <div class="lbl d">PROPRIETARY METRICS GLOSSARY</div>
+      <div class="mt">
+        <div class="mr"><div class="mb">IRR</div><div><div style="font-size:13px;font-weight:600;margin-bottom:3px">Information Return Ratio</div><div style="font-size:11px;color:var(--dim);font-family:monospace;margin-bottom:3px">Outbound communications / Inbound applications</div><div style="font-size:11px;color:var(--dim)">&lt;0.3 Critical &nbsp;&#183;&nbsp; 0.3&#8211;0.6 Active Decay &nbsp;&#183;&nbsp; 0.6&#8211;0.8 Managed &nbsp;&#183;&nbsp; &gt;0.8 Healthy</div></div></div>
+        <div class="mr"><div class="mb">THL</div><div><div style="font-size:13px;font-weight:600;margin-bottom:3px">Trust Half-Life</div><div style="font-size:11px;color:var(--dim);font-family:monospace;margin-bottom:3px">Days until candidate trust reduces by 50% without communication</div><div style="font-size:11px;color:var(--dim)">Industry avg ~9 days &nbsp;&#183;&nbsp; High performers 14+ days &nbsp;&#183;&nbsp; Declining orgs &lt;6 days</div></div></div>
+        <div class="mr"><div class="mb">DDR</div><div><div style="font-size:13px;font-weight:600;margin-bottom:3px">Decision Debt Ratio</div><div style="font-size:11px;color:var(--dim);font-family:monospace;margin-bottom:3px">Returning pipeline entries / Total pipeline entries</div><div style="font-size:11px;color:var(--dim)">&lt;10% Healthy &nbsp;&#183;&nbsp; 10&#8211;20% Warning &nbsp;&#183;&nbsp; &gt;20% Critical</div></div></div>
+        <div class="mr"><div class="mb">STR</div><div><div style="font-size:13px;font-weight:600;margin-bottom:3px">Silence Tax Rate</div><div style="font-size:11px;color:var(--dim);font-family:monospace;margin-bottom:3px">(Duplicate labor + Lost referrals + Reduced response rates) / Total hiring budget</div><div style="font-size:11px;color:var(--dim)">Industry avg: 15&#8211;25% of total hiring budget consumed by silence</div></div></div>
+        <div class="mr"><div class="mb">SII</div><div><div style="font-size:13px;font-weight:600;margin-bottom:3px">Signal Inflation Index</div><div style="font-size:11px;color:var(--dim);font-family:monospace;margin-bottom:3px">Qualified applications / Total applications</div><div style="font-size:11px;color:var(--dim)">&gt;0.6 Healthy &nbsp;&#183;&nbsp; 0.3&#8211;0.6 Warning &nbsp;&#183;&nbsp; &lt;0.3 Critical</div></div></div>
+      </div>
+    </section>
+
+    <!-- VISUAL -->
+    <section id="s-vis" class="sec">
+      <div class="chart-wrap">
+        <div class="lbl">TRUST DECAY CURVE &nbsp;&#183;&nbsp; CANDIDATE TRUST LEVEL OVER 60 DAYS</div>
+        <div style="font-size:12px;color:var(--dim);margin-bottom:20px">Three organizational profiles &#8212; measured from day of application with zero proactive communication.</div>
+        <svg viewBox="0 0 700 300" style="width:100%;max-width:700px;display:block;overflow:visible">
+          <line x1="55" y1="15"  x2="55"  y2="265" stroke="#1e3a50" stroke-width="1"/>
+          <line x1="55" y1="265" x2="685" y2="265" stroke="#1e3a50" stroke-width="1"/>
+          <line x1="55" y1="15"  x2="685" y2="15"  stroke="#1e3a50" stroke-dasharray="3,3" stroke-width="1"/>
+          <line x1="55" y1="77"  x2="685" y2="77"  stroke="#1e3a50" stroke-dasharray="3,3" stroke-width="1"/>
+          <line x1="55" y1="140" x2="685" y2="140" stroke="#c9933a" stroke-dasharray="5,3" stroke-width="1.5" opacity=".7"/>
+          <line x1="55" y1="202" x2="685" y2="202" stroke="#1e3a50" stroke-dasharray="3,3" stroke-width="1"/>
+          <text x="50" y="18"  text-anchor="end" fill="#475569" font-size="10" font-family="monospace">100%</text>
+          <text x="50" y="80"  text-anchor="end" fill="#475569" font-size="10" font-family="monospace">75%</text>
+          <text x="50" y="143" text-anchor="end" fill="#c9933a" font-size="10" font-family="monospace">50%</text>
+          <text x="50" y="205" text-anchor="end" fill="#475569" font-size="10" font-family="monospace">25%</text>
+          <text x="50" y="268" text-anchor="end" fill="#475569" font-size="10" font-family="monospace">0%</text>
+          <text x="128" y="282" text-anchor="middle" fill="#475569" font-size="10" font-family="monospace">7</text>
+          <text x="201" y="282" text-anchor="middle" fill="#475569" font-size="10" font-family="monospace">14</text>
+          <text x="274" y="282" text-anchor="middle" fill="#475569" font-size="10" font-family="monospace">21</text>
+          <text x="368" y="282" text-anchor="middle" fill="#475569" font-size="10" font-family="monospace">30</text>
+          <text x="524" y="282" text-anchor="middle" fill="#475569" font-size="10" font-family="monospace">45</text>
+          <text x="681" y="282" text-anchor="middle" fill="#475569" font-size="10" font-family="monospace">60</text>
+          <text x="55"  y="282" text-anchor="middle" fill="#475569" font-size="10" font-family="monospace">0</text>
+          <text x="368" y="297" text-anchor="middle" fill="#475569" font-size="10" font-family="monospace">Days since application</text>
+          <text x="660" y="136" fill="#c9933a" font-size="9" font-family="monospace">Ghost Threshold</text>
+          <line x1="128" y1="15" x2="128" y2="265" stroke="#16a34a" stroke-dasharray="3,3" opacity=".4"/>
+          <line x1="274" y1="15" x2="274" y2="265" stroke="#c9933a" stroke-dasharray="3,3" opacity=".4"/>
+          <line x1="524" y1="15" x2="524" y2="265" stroke="#dc2626" stroke-dasharray="3,3" opacity=".4"/>
+          <polyline points="55,28 86,48 128,88 201,150 274,195 368,225 524,243 681,253" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linejoin="round"/>
+          <circle cx="55" cy="28" r="3" fill="#dc2626"/><circle cx="86" cy="48" r="3" fill="#dc2626"/><circle cx="128" cy="88" r="3" fill="#dc2626"/><circle cx="201" cy="150" r="3" fill="#dc2626"/><circle cx="274" cy="195" r="3" fill="#dc2626"/><circle cx="368" cy="225" r="3" fill="#dc2626"/><circle cx="524" cy="243" r="3" fill="#dc2626"/><circle cx="681" cy="253" r="3" fill="#dc2626"/>
+          <polyline points="55,28 86,38 128,68 201,113 274,155 368,188 524,215 681,233" fill="none" stroke="#c9933a" stroke-width="2.5" stroke-dasharray="6,2" stroke-linejoin="round"/>
+          <circle cx="55" cy="28" r="3" fill="#c9933a"/><circle cx="86" cy="38" r="3" fill="#c9933a"/><circle cx="128" cy="68" r="3" fill="#c9933a"/><circle cx="201" cy="113" r="3" fill="#c9933a"/><circle cx="274" cy="155" r="3" fill="#c9933a"/><circle cx="368" cy="188" r="3" fill="#c9933a"/><circle cx="524" cy="215" r="3" fill="#c9933a"/><circle cx="681" cy="233" r="3" fill="#c9933a"/>
+          <polyline points="55,28 86,30 128,35 201,45 274,55 368,65 524,75 681,85" fill="none" stroke="#0d7d72" stroke-width="2.5" stroke-linejoin="round"/>
+          <circle cx="55" cy="28" r="3" fill="#0d7d72"/><circle cx="86" cy="30" r="3" fill="#0d7d72"/><circle cx="128" cy="35" r="3" fill="#0d7d72"/><circle cx="201" cy="45" r="3" fill="#0d7d72"/><circle cx="274" cy="55" r="3" fill="#0d7d72"/><circle cx="368" cy="65" r="3" fill="#0d7d72"/><circle cx="524" cy="75" r="3" fill="#0d7d72"/><circle cx="681" cy="85" r="3" fill="#0d7d72"/>
+        </svg>
+        <div class="leg">
+          <div class="li"><span class="ll" style="background:#dc2626"></span>Silent Organization</div>
+          <div class="li"><span class="ll" style="background:#c9933a"></span>Industry Average</div>
+          <div class="li"><span class="ll" style="background:#0d7d72"></span>High Communication Org</div>
+          <div class="li"><span class="ll" style="background:#c9933a;height:1px;margin-top:5px"></span><span style="color:var(--gold)">Ghost Threshold (50%)</span></div>
+        </div>
+      </div>
+      <div class="g4">
+        <div style="background:var(--surf);border:1px solid var(--bord);border-top:3px solid var(--green);border-radius:8px;padding:14px 16px"><div style="font-size:9px;color:var(--green);font-family:monospace;font-weight:700;margin-bottom:4px">STAGE 01 &middot; 0&#8211;7 DAYS</div><div style="font-size:12px;font-weight:700;margin-bottom:6px">Latent Decay</div><div style="font-size:10px;color:var(--muted);line-height:1.6">Uncertainty present but tolerated. Candidate engaged and focused.</div></div>
+        <div style="background:var(--surf);border:1px solid var(--bord);border-top:3px solid var(--gold);border-radius:8px;padding:14px 16px"><div style="font-size:9px;color:var(--gold);font-family:monospace;font-weight:700;margin-bottom:4px">STAGE 02 &middot; 7&#8211;21 DAYS</div><div style="font-size:12px;font-weight:700;margin-bottom:6px">Active Decay</div><div style="font-size:10px;color:var(--muted);line-height:1.6">Trust erodes. Candidate hedges &#8212; applies to competing roles.</div></div>
+        <div style="background:var(--surf);border:1px solid var(--bord);border-top:3px solid var(--orange);border-radius:8px;padding:14px 16px"><div style="font-size:9px;color:var(--orange);font-family:monospace;font-weight:700;margin-bottom:4px">STAGE 03 &middot; 21&#8211;45 DAYS</div><div style="font-size:12px;font-weight:700;margin-bottom:6px">Accelerated Decay</div><div style="font-size:10px;color:var(--muted);line-height:1.6">Ghost Threshold crossed. Behavior toward employer shifts permanently.</div></div>
+        <div style="background:var(--surf);border:1px solid var(--bord);border-top:3px solid var(--red);border-radius:8px;padding:14px 16px"><div style="font-size:9px;color:var(--red);font-family:monospace;font-weight:700;margin-bottom:4px">STAGE 04 &middot; 45+ DAYS</div><div style="font-size:12px;font-weight:700;margin-bottom:6px">Terminal Decay</div><div style="font-size:10px;color:var(--muted);line-height:1.6">Market-level damage. Shared publicly. No quick fix exists.</div></div>
+      </div>
+      <div class="card">
+        <div class="lbl d">THE DECAY LOOP &nbsp;&#183;&nbsp; HOW ORGANIZATIONS MANUFACTURE THEIR OWN PROBLEM</div>
+        <div class="loop">
+          <div class="ln hi"><div class="lnl" style="color:var(--red)">Silence</div><div class="lns">No outbound info</div></div><div class="la">&#8594;</div>
+          <div class="ln"><div class="lnl">Uncertainty</div><div class="lns">Candidate blind spot</div></div><div class="la">&#8594;</div>
+          <div class="ln"><div class="lnl">Signal Inflation</div><div class="lns">Everyone applies everywhere</div></div><div class="la">&#8594;</div>
+          <div class="ln"><div class="lnl">Volume Overload</div><div class="lns">Recruiter overwhelm</div></div><div class="la">&#8594;</div>
+          <div class="ln"><div class="lnl">More Automation</div><div class="lns">Aggressive filtering</div></div><div class="la">&#8594;</div>
+          <div class="ln hi"><div class="lnl" style="color:var(--red)">More Silence</div><div class="lns">Loop repeats</div></div>
+        </div>
+        <p style="font-size:12px;color:var(--red);font-style:italic;border-top:1px solid var(--bord);padding-top:12px;margin-bottom:14px">&#8593; The loop closes here. Organizations mistake self-created noise for market demand &#8212; then invest in faster filtering, which accelerates the same cycle.</p>
+        <div style="background:var(--tdim);border:1px solid var(--tbord);border-radius:6px;padding:14px 18px"><div style="font-size:11px;font-weight:700;color:var(--teal);margin-bottom:6px">THE HIDDEN LEVER</div><div style="font-size:13px;line-height:1.7">The smallest intervention with the largest downstream effect is not faster filtering &#8212; it is <strong>reducing candidate uncertainty before it drives irrational behavior.</strong> The leverage point is information flow, not screening speed.</div></div>
+      </div>
+    </section>
+
+    <!-- AUDIT -->
+    <section id="s-audit" class="sec">
+      <div id="audit-form">
+        <div class="ah">
+          <div><div class="lbl">PIPELINE TRUST DECAY AUDIT&#8482;</div><div style="font-size:13px;color:var(--muted)">Score your organization across all four decay dimensions. Takes 5 minutes.</div></div>
+          <div style="text-align:right"><div class="ac-num" id="ac">0/13</div><div class="ac-lbl">ANSWERED</div></div>
+        </div>
+
+        <div class="cc" style="border-top:3px solid var(--teal)">
+          <div class="ch"><span class="ci">&#8629;</span><div><div class="cn">Information Return</div><div class="ck" style="color:var(--teal)">METRIC: IRR</div><div class="cd">Measures how much information your process returns to candidates versus how much it extracts from them.</div></div></div>
+          <div class="q"><div class="qt">1. What % of applicants receive any status update after applying?</div><div class="or" data-q="irr1"><button class="ob" data-c="#0d7d72" onclick="pick(this,'irr1',1)">&lt; 10%</button><button class="ob" data-c="#0d7d72" onclick="pick(this,'irr1',2)">10&#8211;30%</button><button class="ob" data-c="#0d7d72" onclick="pick(this,'irr1',3)">30&#8211;60%</button><button class="ob" data-c="#0d7d72" onclick="pick(this,'irr1',4)">60&#8211;80%</button><button class="ob" data-c="#0d7d72" onclick="pick(this,'irr1',5)">&gt; 80%</button></div></div>
+          <div class="q"><div class="qt">2. Do you communicate expected timelines at the application stage?</div><div class="or" data-q="irr2"><button class="ob" data-c="#0d7d72" onclick="pick(this,'irr2',1)">Never</button><button class="ob" data-c="#0d7d72" onclick="pick(this,'irr2',2)">Rarely</button><button class="ob" data-c="#0d7d72" onclick="pick(this,'irr2',3)">Sometimes</button><button class="ob" data-c="#0d7d72" onclick="pick(this,'irr2',4)">Usually</button><button class="ob" data-c="#0d7d72" onclick="pick(this,'irr2',5)">Always</button></div></div>
+          <div class="q"><div class="qt">3. Do rejected candidates receive a reason category?</div><div class="or" data-q="irr3"><button class="ob" data-c="#0d7d72" onclick="pick(this,'irr3',1)">Never</button><button class="ob" data-c="#0d7d72" onclick="pick(this,'irr3',2)">Rarely</button><button class="ob" data-c="#0d7d72" onclick="pick(this,'irr3',3)">Sometimes</button><button class="ob" data-c="#0d7d72" onclick="pick(this,'irr3',4)">Usually</button><button class="ob" data-c="#0d7d72" onclick="pick(this,'irr3',5)">Always</button></div></div>
+          <div class="q"><div class="qt">4. How quickly does a candidate get first contact after applying?</div><div class="or" data-q="irr4"><button class="ob" data-c="#0d7d72" onclick="pick(this,'irr4',1)">&gt; 2 weeks</button><button class="ob" data-c="#0d7d72" onclick="pick(this,'irr4',2)">1&#8211;2 weeks</button><button class="ob" data-c="#0d7d72" onclick="pick(this,'irr4',3)">3&#8211;7 days</button><button class="ob" data-c="#0d7d72" onclick="pick(this,'irr4',4)">1&#8211;3 days</button><button class="ob" data-c="#0d7d72" onclick="pick(this,'irr4',5)">Same day</button></div></div>
+        </div>
+
+        <div class="cc" style="border-top:3px solid var(--purple)">
+          <div class="ch"><span class="ci">&#129504;</span><div><div class="cn">Decision Memory</div><div class="ck" style="color:var(--purple)">METRIC: DDR</div><div class="cd">Measures whether hiring decisions are captured as reusable knowledge or lost after every cycle.</div></div></div>
+          <div class="q"><div class="qt">5. Are reasons for hiring decisions recorded in your ATS?</div><div class="or" data-q="ddr1"><button class="ob" data-c="#7c3aed" onclick="pick(this,'ddr1',1)">Never</button><button class="ob" data-c="#7c3aed" onclick="pick(this,'ddr1',2)">Rarely</button><button class="ob" data-c="#7c3aed" onclick="pick(this,'ddr1',3)">Sometimes</button><button class="ob" data-c="#7c3aed" onclick="pick(this,'ddr1',4)">Usually</button><button class="ob" data-c="#7c3aed" onclick="pick(this,'ddr1',5)">Always</button></div></div>
+          <div class="q"><div class="qt">6. Can a recruiter instantly see if a candidate was previously evaluated?</div><div class="or" data-q="ddr2"><button class="ob" data-c="#7c3aed" onclick="pick(this,'ddr2',1)">No system</button><button class="ob" data-c="#7c3aed" onclick="pick(this,'ddr2',2)">Manual search only</button><button class="ob" data-c="#7c3aed" onclick="pick(this,'ddr2',3)">Sometimes visible</button><button class="ob" data-c="#7c3aed" onclick="pick(this,'ddr2',4)">Usually visible</button><button class="ob" data-c="#7c3aed" onclick="pick(this,'ddr2',5)">Always instant</button></div></div>
+          <div class="q"><div class="qt">7. Do you systematically track strong candidates who were not ready yet for future roles?</div><div class="or" data-q="ddr3"><button class="ob" data-c="#7c3aed" onclick="pick(this,'ddr3',1)">Never</button><button class="ob" data-c="#7c3aed" onclick="pick(this,'ddr3',2)">Rarely</button><button class="ob" data-c="#7c3aed" onclick="pick(this,'ddr3',3)">Sometimes</button><button class="ob" data-c="#7c3aed" onclick="pick(this,'ddr3',4)">Usually</button><button class="ob" data-c="#7c3aed" onclick="pick(this,'ddr3',5)">Systematically</button></div></div>
+        </div>
+
+        <div class="cc" style="border-top:3px solid var(--gold)">
+          <div class="ch"><span class="ci">&#128202;</span><div><div class="cn">Trust Measurement</div><div class="ck" style="color:var(--gold)">METRIC: THL</div><div class="cd">Measures whether your organization can detect and respond to trust decay before it becomes irreversible.</div></div></div>
+          <div class="q"><div class="qt">8. Do you survey candidates about their experience &#8212; including those not hired?</div><div class="or" data-q="thl1"><button class="ob" data-c="#c9933a" onclick="pick(this,'thl1',1)">Never</button><button class="ob" data-c="#c9933a" onclick="pick(this,'thl1',2)">Rarely</button><button class="ob" data-c="#c9933a" onclick="pick(this,'thl1',3)">Sometimes</button><button class="ob" data-c="#c9933a" onclick="pick(this,'thl1',4)">Usually</button><button class="ob" data-c="#c9933a" onclick="pick(this,'thl1',5)">Always</button></div></div>
+          <div class="q"><div class="qt">9. Can you track candidate drop-off by hiring stage?</div><div class="or" data-q="thl2"><button class="ob" data-c="#c9933a" onclick="pick(this,'thl2',1)">No visibility</button><button class="ob" data-c="#c9933a" onclick="pick(this,'thl2',2)">Partial</button><button class="ob" data-c="#c9933a" onclick="pick(this,'thl2',3)">Basic tracking</button><button class="ob" data-c="#c9933a" onclick="pick(this,'thl2',4)">Good visibility</button><button class="ob" data-c="#c9933a" onclick="pick(this,'thl2',5)">Full tracking</button></div></div>
+          <div class="q"><div class="qt">10. Can you tell whether your employer brand is improving or deteriorating over time?</div><div class="or" data-q="thl3"><button class="ob" data-c="#c9933a" onclick="pick(this,'thl3',1)">No measurement</button><button class="ob" data-c="#c9933a" onclick="pick(this,'thl3',2)">Anecdotal only</button><button class="ob" data-c="#c9933a" onclick="pick(this,'thl3',3)">Some data</button><button class="ob" data-c="#c9933a" onclick="pick(this,'thl3',4)">Regular tracking</button><button class="ob" data-c="#c9933a" onclick="pick(this,'thl3',5)">Real-time</button></div></div>
+        </div>
+
+        <div class="cc" style="border-top:3px solid var(--red)">
+          <div class="ch"><span class="ci">&#128225;</span><div><div class="cn">Signal Quality</div><div class="ck" style="color:var(--red)">METRIC: SII</div><div class="cd">Measures whether your pipeline generates useful hiring signal or self-manufactured noise.</div></div></div>
+          <div class="q"><div class="qt">11. Has applicant volume increased significantly in the last 2 years?</div><div class="or" data-q="sig1"><button class="ob" data-c="#dc2626" onclick="pick(this,'sig1',1)">&gt; 2&#215; increase</button><button class="ob" data-c="#dc2626" onclick="pick(this,'sig1',2)">50&#8211;100% up</button><button class="ob" data-c="#dc2626" onclick="pick(this,'sig1',3)">20&#8211;50% up</button><button class="ob" data-c="#dc2626" onclick="pick(this,'sig1',4)">Slight increase</button><button class="ob" data-c="#dc2626" onclick="pick(this,'sig1',5)">Stable / down</button></div></div>
+          <div class="q"><div class="qt">12. Has your interview-to-placement ratio declined?</div><div class="or" data-q="sig2"><button class="ob" data-c="#dc2626" onclick="pick(this,'sig2',1)">Significantly</button><button class="ob" data-c="#dc2626" onclick="pick(this,'sig2',2)">Moderately</button><button class="ob" data-c="#dc2626" onclick="pick(this,'sig2',3)">Slightly</button><button class="ob" data-c="#dc2626" onclick="pick(this,'sig2',4)">Same</button><button class="ob" data-c="#dc2626" onclick="pick(this,'sig2',5)">Improved</button></div></div>
+          <div class="q"><div class="qt">13. Do you see the same candidates re-entering your pipeline from prior cycles?</div><div class="or" data-q="sig3"><button class="ob" data-c="#dc2626" onclick="pick(this,'sig3',1)">Very frequently</button><button class="ob" data-c="#dc2626" onclick="pick(this,'sig3',2)">Often</button><button class="ob" data-c="#dc2626" onclick="pick(this,'sig3',3)">Sometimes</button><button class="ob" data-c="#dc2626" onclick="pick(this,'sig3',4)">Rarely</button><button class="ob" data-c="#dc2626" onclick="pick(this,'sig3',5)">Almost never</button></div></div>
+        </div>
+
+        <button class="sub" id="sub" onclick="gen()">Complete all 13 questions to generate your score (0/13)</button>
+      </div>
+
+      <div id="res">
+        <div class="sc" id="sc">
+          <div class="lbl d" style="margin-bottom:8px">YOUR PIPELINE TRUST DECAY SCORE</div>
+          <div class="sn2" id="snum">0</div>
+          <div class="sz" id="sz">&#8212;</div>
+          <p class="sdsc" id="sdsc">&#8212;</p>
+        </div>
+        <div class="bg" id="bg"></div>
+        <div class="ac2"><div class="lbl">PRIORITY ACTIONS</div><div id="al"></div></div>
+        <div class="uc">
+          <div class="ul">WANT THE FULL SYSTEM?</div>
+          <div class="ut">The Recruiter Intelligence Suite includes the complete Pipeline Trust Decay intervention playbook, the Decision Quality Index, the 15-Year Recruiter Simulator, and the full Deal Health Engine &#8212; built for recruiting leaders who refuse to become obsolete.</div>
+          <div class="uh">The Revenue Autopsy Newsletter &#183; New issue every week.</div>
+        </div>
+        <button class="retake" onclick="retake()">&#8592; Retake Audit</button>
+      </div>
+    </section>
+
+  </div>
+  <footer><div class="ft">PIPELINE TRUST DECAY MODEL&#8482; &nbsp;&#183;&nbsp; THE REVENUE AUTOPSY &nbsp;&#183;&nbsp; RECRUITER INTELLIGENCE SUITE &nbsp;&#183;&nbsp; 2026</div></footer>
+</div>
+
+<script>
+var A={}, N=13;
+var CATS=[
+  {id:'irr',name:'Information Return',metric:'IRR',color:'#0d7d72',qs:['irr1','irr2','irr3','irr4']},
+  {id:'ddr',name:'Decision Memory',metric:'DDR',color:'#7c3aed',qs:['ddr1','ddr2','ddr3']},
+  {id:'thl',name:'Trust Measurement',metric:'THL',color:'#c9933a',qs:['thl1','thl2','thl3']},
+  {id:'sig',name:'Signal Quality',metric:'SII',color:'#dc2626',qs:['sig1','sig2','sig3']}
+];
+function interp(s){
+  var p=Math.round(((s-13)/52)*100);
+  if(s<=26)return{zone:'Critical Decay Zone',color:'#dc2626',pct:p,desc:'Your pipeline is actively destroying market trust. Every week without intervention compounds the damage.',actions:['Deploy automated acknowledgment emails within 24 hours of every application','Conduct a full ATS communication audit this month','Survey the last 50 rejected candidates immediately']};
+  if(s<=39)return{zone:'Active Decay Zone',color:'#f97316',pct:p,desc:'Trust is eroding. You are building decision debt and losing referral networks faster than you\'re gaining candidates.',actions:['Establish a minimum cadence: Day 1, Day 7, Day 21 updates for every candidate','Start recording rejection reasons in your ATS from today','Launch a monthly candidate experience survey']};
+  if(s<=52)return{zone:'Managed Decay Zone',color:'#c9933a',pct:p,desc:'Trust is stable but not growing. Your pipeline is functional but vulnerable to any volume shock.',actions:['Build a talent pipeline for returning strong candidates who weren\'t ready yet','Add employer brand metrics to your reporting dashboard','Introduce a referral tracking mechanism']};
+  return{zone:'Trust Building Zone',color:'#0d7d72',pct:p,desc:'You are above industry standard. Your pipeline is a competitive advantage &#8212; now make it measurable.',actions:['Publish your communication standards publicly as an employer brand asset','Benchmark against competitors and quantify the advantage','Build this into a formal Pipeline Trust Score for your organization']};
+}
+function openApp(tab){document.getElementById('cover').hidden=true;document.getElementById('app').hidden=false;sw(tab);}
+function goBack(){document.getElementById('app').hidden=true;document.getElementById('cover').hidden=false;}
+function sw(tab){
+  document.querySelectorAll('.tb').forEach(function(b){b.classList.remove('on');});
+  document.querySelectorAll('.sec').forEach(function(s){s.classList.remove('on');});
+  document.getElementById('t-'+tab).classList.add('on');
+  document.getElementById('s-'+tab).classList.add('on');
+}
+function pick(btn,qId,score){
+  btn.closest('.or').querySelectorAll('.ob').forEach(function(b){
+    b.style.borderColor='';b.style.color='';b.style.background='';b.style.fontWeight='';
+  });
+  var c=btn.getAttribute('data-c')||'#0d7d72';
+  btn.style.borderColor=c;btn.style.color=c;btn.style.background=c+'22';btn.style.fontWeight='700';
+  A[qId]=score;upd();
+}
+function upd(){
+  var n=Object.keys(A).length;
+  var el=document.getElementById('ac');
+  var sb=document.getElementById('sub');
+  el.textContent=n+'/'+N;
+  if(n===N){el.classList.add('rdy');sb.classList.add('rdy');sb.textContent='GENERATE TRUST DECAY SCORE \u2192';}
+  else{el.classList.remove('rdy');sb.classList.remove('rdy');sb.textContent='Complete all '+N+' questions to generate your score ('+n+'/'+N+')';}
+}
+function gen(){
+  if(Object.keys(A).length<N)return;
+  var total=Object.values(A).reduce(function(s,v){return s+v;},0);
+  var r=interp(total);
+  document.getElementById('snum').textContent=r.pct;
+  document.getElementById('snum').style.color=r.color;
+  document.getElementById('sz').textContent=r.zone;
+  document.getElementById('sdsc').innerHTML=r.desc;
+  document.getElementById('sc').style.borderColor=r.color;
+  var bg=document.getElementById('bg');bg.innerHTML='';
+  CATS.forEach(function(cat){
+    var cs=cat.qs.reduce(function(s,q){return s+(A[q]||0);},0);
+    var cp=Math.round((cs/(cat.qs.length*5))*100);
+    var bc=cp>=60?'#0d7d72':cp>=40?'#c9933a':'#dc2626';
+    bg.innerHTML+='<div class="bc"><div class="bh"><div><div style="font-size:12px;font-weight:700">'+cat.name+'</div><div style="font-size:10px;color:'+cat.color+';font-family:monospace">'+cat.metric+'</div></div><div class="bp" style="color:'+bc+'">'+cp+'%</div></div><div class="bb"><div class="bbr" style="width:'+cp+'%;background:'+bc+'"></div></div></div>';
+  });
+  var al=document.getElementById('al');al.innerHTML='';
+  r.actions.forEach(function(a,i){
+    al.innerHTML+='<div class="ar"><div class="an">'+(i+1)+'</div><div class="at">'+a+'</div></div>';
+  });
+  document.getElementById('audit-form').style.display='none';
+  document.getElementById('res').style.display='block';
+}
+function retake(){
+  A={};
+  document.querySelectorAll('.ob').forEach(function(b){
+    b.style.borderColor='';b.style.color='';b.style.background='';b.style.fontWeight='';
+  });
+  document.getElementById('audit-form').style.display='block';
+  document.getElementById('res').style.display='none';
+  upd();
+}
+</script>
+</body>
+</html>
