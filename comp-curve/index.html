@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comp Curve Diagnostic — Recruiter Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,900;1,9..144,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0F1418;
+    --surface:#1A2129;
+    --surface-raised:#212A33;
+    --rule:#2A333C;
+    --text:#EAEDEF;
+    --muted:#8D99A3;
+    --teal:#3FB68C;
+    --amber:#E3A857;
+    --rust:#C85C4A;
+    --blue:#5B8DBE;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--ink);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--teal);color:#0F1418;}
+  a{color:var(--teal);}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
+
+  header.top{border-bottom:1px solid var(--rule);padding:28px 0 24px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin:0 0 10px;}
+  h1{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(28px,4vw,42px);margin:0 0 10px;letter-spacing:-.01em;}
+  h1 em{font-style:italic;font-weight:500;color:var(--teal);}
+  .thesis{color:var(--muted);max-width:680px;font-size:16px;margin:0;}
+
+  main{padding:40px 0 80px;}
+
+  .console{display:grid;grid-template-columns:400px 1fr;gap:0;border:1px solid var(--rule);border-radius:6px;overflow:hidden;background:var(--surface);}
+  @media (max-width:900px){.console{grid-template-columns:1fr;}}
+
+  .panel{padding:28px;}
+  .panel + .panel{border-left:1px solid var(--rule);}
+  @media (max-width:900px){.panel + .panel{border-left:none;border-top:1px solid var(--rule);}}
+
+  .panel-title{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 20px;}
+
+  fieldset{border:none;padding:0;margin:0 0 22px;}
+  legend{font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--text);padding:0 0 10px;width:100%;border-bottom:1px solid var(--rule);margin-bottom:14px;}
+  label{display:block;font-size:13px;color:var(--muted);margin:0 0 6px;}
+  .field{margin-bottom:14px;}
+  .field .hint{font-size:11.5px;color:var(--muted);opacity:.75;margin-top:4px;}
+  input[type=number], input[type=text], select{
+    width:100%;background:var(--ink);border:1px solid var(--rule);color:var(--text);
+    font-family:'IBM Plex Mono',monospace;font-size:14px;padding:10px 12px;border-radius:4px;
+  }
+  select{appearance:none;-webkit-appearance:none;cursor:pointer;}
+  input:focus, select:focus{outline:none;border-color:var(--teal);}
+  input[type=checkbox]{width:auto;accent-color:var(--teal);margin-right:8px;margin-top:2px;flex-shrink:0;}
+  .checkline{display:flex;align-items:flex-start;gap:0;font-size:13px;color:var(--muted);margin-bottom:10px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+  button#run{
+    width:100%;background:var(--teal);color:#0B1210;border:none;font-family:'IBM Plex Mono',monospace;
+    font-weight:600;font-size:13.5px;letter-spacing:.05em;text-transform:uppercase;padding:14px;
+    border-radius:4px;cursor:pointer;margin-top:6px;
+  }
+  button#run:hover{filter:brightness(1.08);}
+  button#run:active{transform:translateY(1px);}
+
+  .curve-wrap{background:var(--ink);border:1px solid var(--rule);border-radius:6px;padding:16px;margin-bottom:22px;}
+  #curve{width:100%;height:auto;display:block;}
+
+  .legend-row{display:flex;gap:18px;flex-wrap:wrap;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);margin-top:10px;}
+  .legend-row span{display:inline-flex;align-items:center;gap:6px;}
+  .swatch{width:10px;height:10px;border-radius:2px;display:inline-block;}
+
+  .readout{display:none;}
+  .readout.show{display:block;}
+
+  .readout-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+  @media (max-width:520px){.readout-grid{grid-template-columns:1fr;}}
+
+  .stat{background:var(--surface-raised);border:1px solid var(--rule);border-radius:5px;padding:14px 16px;}
+  .stat .num{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:600;}
+  .stat .lbl{font-size:11.5px;color:var(--muted);margin-top:2px;}
+
+  .tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border-radius:3px;margin:2px 6px 2px 0;}
+  .tag.structural{background:rgba(227,168,87,.15);color:var(--amber);border:1px solid rgba(227,168,87,.4);}
+  .tag.market{background:rgba(200,92,74,.15);color:var(--rust);border:1px solid rgba(200,92,74,.4);}
+  .tag.performance{background:rgba(91,141,190,.15);color:var(--blue);border:1px solid rgba(91,141,190,.4);}
+  .tag.pipeline{background:rgba(200,92,74,.15);color:var(--rust);border:1px solid rgba(200,92,74,.4);}
+  .tag.healthy{background:rgba(63,182,140,.15);color:var(--teal);border:1px solid rgba(63,182,140,.4);}
+
+  .verdict{font-family:'Fraunces',serif;font-size:20px;font-weight:600;margin:18px 0 8px;}
+  .verdict-body{color:var(--muted);font-size:14.5px;margin:0 0 12px;}
+  .subnote{color:var(--muted);font-size:13px;margin:0 0 8px;padding:10px 12px;background:var(--surface-raised);border-left:2px solid var(--rule);border-radius:3px;}
+
+  .placeholder{color:var(--muted);font-size:14.5px;padding:40px 10px;text-align:center;border:1px dashed var(--rule);border-radius:6px;}
+
+  footer{border-top:1px solid var(--rule);padding:24px 0 48px;color:var(--muted);font-size:12.5px;}
+  footer .disclaimer{max-width:720px;}
+</style>
+</head>
+<body>
+
+<a href="../" style="position:fixed;top:14px;left:18px;z-index:50;font-family:monospace;font-size:11px;letter-spacing:.08em;color:var(--muted,#8AAAB8);text-decoration:none;border:1px solid rgba(143,182,175,0.25);padding:5px 10px;border-radius:4px;">&larr; RIS</a>
+
+<header class="top">
+  <div class="wrap">
+    <p class="eyebrow">Recruiter Intelligence · Diagnostic Engine v2</p>
+    <h1>Comp Curve <em>Diagnostic</em></h1>
+    <p class="thesis">Before you quit your agency for "better comp" somewhere else — find out whether your problem is structural, market-driven, draw-distorted, or a pipeline issue you haven't isolated yet. Enter your numbers below.</p>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="console">
+
+      <div class="panel">
+        <p class="panel-title">01 — Your numbers</p>
+
+        <fieldset>
+          <legend>Vertical</legend>
+          <div class="field">
+            <label for="vertical">Which best describes your desk?</label>
+            <select id="vertical">
+              <option value="contingency_general">Contingency — General / Corporate</option>
+              <option value="light_industrial">Contingency — Light Industrial / Staffing</option>
+              <option value="tech_specialized">Contingency — Tech / Engineering Specialized</option>
+              <option value="retained_exec">Retained / Executive Search</option>
+            </select>
+            <p class="hint">Sets starting defaults for benchmark % and zone breakpoints below — all editable. These are directional starting points, not verified industry data for your specific market.</p>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Compensation</legend>
+          <div class="field">
+            <label for="base">Annual base salary ($)</label>
+            <input type="number" id="base" placeholder="50000">
+          </div>
+          <div class="field">
+            <label for="cola">Guaranteed add-ons / COLA ($, optional)</label>
+            <input type="number" id="cola" placeholder="10000">
+          </div>
+          <div class="field">
+            <label for="commission">Trailing 12-month commission & bonus earned ($)</label>
+            <input type="number" id="commission" placeholder="22000">
+          </div>
+          <div class="field">
+            <label class="checkline"><input type="checkbox" id="drawNetted"> The commission figure above is already net of any draw repayment (i.e. it reflects actual cash paid, not gross commission before clawback).</label>
+          </div>
+          <div class="field" id="drawFieldWrap">
+            <label for="drawDeducted">If not netted: draw repayment deducted from commission this period ($)</label>
+            <input type="number" id="drawDeducted" placeholder="0">
+            <p class="hint">Leave at 0 if you're not on a draw, or if you already checked the box above.</p>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Production</legend>
+          <div class="field">
+            <label for="billings">Trailing 12-month billings generated ($)</label>
+            <input type="number" id="billings" placeholder="495000">
+          </div>
+          <div class="field">
+            <label for="deals">Placements closed in period (#)</label>
+            <input type="number" id="deals" placeholder="14">
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Pipeline quality — by cause</legend>
+          <div class="field">
+            <label for="starts">Total contract/placement starts in period (#)</label>
+            <input type="number" id="starts" placeholder="18">
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label for="falloffClient">Falloffs — client-driven (#)</label>
+              <input type="number" id="falloffClient" placeholder="2">
+              <p class="hint">Layoffs, budget cuts, role cancelled.</p>
+            </div>
+            <div class="field">
+              <label for="falloffCandidate">Falloffs — candidate-driven (#)</label>
+              <input type="number" id="falloffCandidate" placeholder="1">
+              <p class="hint">Ghosted, poor fit, quit early.</p>
+            </div>
+          </div>
+          <div class="field">
+            <label for="falloffUnknown">Falloffs — unclear / other (#)</label>
+            <input type="number" id="falloffUnknown" placeholder="1">
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Market signal — needs 2 of 3</legend>
+          <div class="field">
+            <label class="checkline"><input type="checkbox" id="m1"> Average fee % on new client agreements has dropped over the trailing 12 months.</label>
+            <label class="checkline"><input type="checkbox" id="m2"> Other recruiters/agencies in your specific vertical have described the same fee pressure.</label>
+            <label class="checkline"><input type="checkbox" id="m3"> Multiple clients (not just one) have pushed back on your fee % or requested flat-fee alternatives this year.</label>
+            <p class="hint">One checked box is an anecdote. Two or more is treated as a market signal worth acting on.</p>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Benchmark & zones (editable)</legend>
+          <div class="field">
+            <label for="benchmark">Healthy effective payout floor (%)</label>
+            <input type="number" id="benchmark" value="20">
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label for="zoneLow">Junior Volume Zone ends at ($)</label>
+              <input type="number" id="zoneLow" value="250000">
+            </div>
+            <div class="field">
+              <label for="zoneHigh">Closer Zone begins at ($)</label>
+              <input type="number" id="zoneHigh" value="620000">
+            </div>
+          </div>
+          <p class="hint">Auto-filled from your vertical selection above. Override if you know better numbers for your desk.</p>
+        </fieldset>
+
+        <button id="run">Run diagnostic</button>
+      </div>
+
+      <div class="panel">
+        <p class="panel-title">02 — Curve position & verdict</p>
+
+        <div class="curve-wrap">
+          <canvas id="curve" width="680" height="360"></canvas>
+        </div>
+        <div class="legend-row">
+          <span><span class="swatch" style="background:var(--blue)"></span>Junior Volume Zone</span>
+          <span><span class="swatch" style="background:var(--amber)"></span>Valley Zone</span>
+          <span><span class="swatch" style="background:var(--teal)"></span>Closer Zone</span>
+          <span><span class="swatch" style="background:var(--text)"></span>Your position</span>
+        </div>
+
+        <div id="placeholder" class="placeholder">Enter your numbers and run the diagnostic to plot your position on the curve.</div>
+
+        <div id="readout" class="readout">
+          <div class="readout-grid">
+            <div class="stat">
+              <div class="num" id="stat-payout">—</div>
+              <div class="lbl">Effective payout % (draw-adjusted)</div>
+            </div>
+            <div class="stat">
+              <div class="num" id="stat-falloff">—</div>
+              <div class="lbl">Total falloff rate</div>
+            </div>
+          </div>
+
+          <div id="tags"></div>
+          <div class="verdict" id="verdict-title"></div>
+          <p class="verdict-body" id="verdict-body"></p>
+          <div id="subnotes"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap disclaimer">
+    <p>This tool models the case pattern documented in the Comp Curve Diagnostic Engine research (Recruiter Intelligence). It's a directional read, not financial or career advice — use it to ask better questions of your own leadership, not as a final answer. Vertical defaults and payout benchmarks are editable starting points, not verified industry data for your specific market.</p>
+    <p>© Recruiter Intelligence</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const canvas = $('curve');
+  const ctx = canvas.getContext('2d');
+
+  const W = canvas.width, H = canvas.height;
+  const padL = 55, padR = 20, padT = 20, padB = 40;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+
+  const xMax = 1000000;
+  const yMax = 45;
+  const yMin = 5;
+
+  // Vertical presets: benchmark %, zone breakpoints
+  const VERTICAL_PRESETS = {
+    contingency_general: {benchmark:20, zoneLow:250000, zoneHigh:620000},
+    light_industrial:    {benchmark:15, zoneLow:300000, zoneHigh:700000},
+    tech_specialized:    {benchmark:22, zoneLow:250000, zoneHigh:650000},
+    retained_exec:       {benchmark:25, zoneLow:350000, zoneHigh:800000}
+  };
+
+  function applyVerticalPreset(){
+    const v = $('vertical').value;
+    const p = VERTICAL_PRESETS[v];
+    if(p){
+      $('benchmark').value = p.benchmark;
+      $('zoneLow').value = p.zoneLow;
+      $('zoneHigh').value = p.zoneHigh;
+    }
+    render();
+  }
+  $('vertical').addEventListener('change', applyVerticalPreset);
+
+  function xToPx(x){ return padL + (x/xMax)*plotW; }
+  function yToPx(y){ return padT + plotH - ((y-yMin)/(yMax-yMin))*plotH; }
+
+  function referenceCurveY(x){
+    const t = x/xMax;
+    const base = 26 - 14*Math.exp(-Math.pow((t-0.42)/0.18,2)) + 10*Math.pow(t,2.2);
+    return Math.max(yMin+2, Math.min(yMax-2, base));
+  }
+
+  function getZones(){
+    const zoneLow = parseFloat($('zoneLow').value) || 250000;
+    const zoneHigh = parseFloat($('zoneHigh').value) || 620000;
+    return {zoneLow, zoneHigh};
+  }
+
+  function drawZoneBands(){
+    const {zoneLow, zoneHigh} = getZones();
+    const zones = [
+      {from:0, to:zoneLow, color:'rgba(91,141,190,0.10)'},
+      {from:zoneLow, to:zoneHigh, color:'rgba(227,168,87,0.10)'},
+      {from:zoneHigh, to:xMax, color:'rgba(63,182,140,0.10)'}
+    ];
+    zones.forEach(z=>{
+      ctx.fillStyle = z.color;
+      ctx.fillRect(xToPx(z.from), padT, xToPx(z.to)-xToPx(z.from), plotH);
+    });
+  }
+
+  function drawAxes(){
+    ctx.strokeStyle = '#2A333C';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(padL, padT);
+    ctx.lineTo(padL, padT+plotH);
+    ctx.lineTo(padL+plotW, padT+plotH);
+    ctx.stroke();
+
+    ctx.fillStyle = '#8D99A3';
+    ctx.font = '11px IBM Plex Mono, monospace';
+    ctx.textAlign = 'center';
+    [0,250000,500000,750000,1000000].forEach(v=>{
+      const px = xToPx(v);
+      ctx.fillText('$'+(v/1000)+'k', px, padT+plotH+18);
+    });
+    ctx.textAlign = 'right';
+    [10,20,30,40].forEach(v=>{
+      const py = yToPx(v);
+      ctx.fillText(v+'%', padL-10, py+4);
+    });
+
+    ctx.save();
+    ctx.translate(16, padT+plotH/2);
+    ctx.rotate(-Math.PI/2);
+    ctx.textAlign='center';
+    ctx.fillStyle='#8D99A3';
+    ctx.font='11px IBM Plex Mono, monospace';
+    ctx.fillText('Effective payout %', 0, 0);
+    ctx.restore();
+
+    ctx.textAlign='center';
+    ctx.fillText('Trailing 12-month billings', padL+plotW/2, padT+plotH+34);
+  }
+
+  function drawReferenceCurve(){
+    ctx.strokeStyle = 'rgba(234,237,239,0.35)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4,4]);
+    ctx.beginPath();
+    for(let x=0;x<=xMax;x+=5000){
+      const y = referenceCurveY(x);
+      const px = xToPx(x), py = yToPx(y);
+      if(x===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  function drawZoneLabels(){
+    const {zoneLow, zoneHigh} = getZones();
+    ctx.font = '10px IBM Plex Mono, monospace';
+    ctx.textAlign='center';
+    ctx.fillStyle = 'rgba(91,141,190,0.9)';
+    ctx.fillText('JUNIOR VOLUME', xToPx(zoneLow/2), padT+16);
+    ctx.fillStyle = 'rgba(227,168,87,0.9)';
+    ctx.fillText('VALLEY', xToPx((zoneLow+zoneHigh)/2), padT+16);
+    ctx.fillStyle = 'rgba(63,182,140,0.9)';
+    ctx.fillText('CLOSER', xToPx((zoneHigh+xMax)/2), padT+16);
+  }
+
+  let userPoint = null;
+
+  function render(){
+    ctx.clearRect(0,0,W,H);
+    drawZoneBands();
+    drawAxes();
+    drawZoneLabels();
+    drawReferenceCurve();
+    if(userPoint){
+      const px = xToPx(Math.min(userPoint.x, xMax));
+      const py = yToPx(Math.min(Math.max(userPoint.y, yMin), yMax));
+      ctx.beginPath();
+      ctx.arc(px, py, 7, 0, Math.PI*2);
+      ctx.fillStyle = '#EAEDEF';
+      ctx.fill();
+      ctx.strokeStyle = '#0F1418';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.font = '11px IBM Plex Mono, monospace';
+      ctx.fillStyle = '#EAEDEF';
+      ctx.textAlign = px > W-140 ? 'right' : 'left';
+      ctx.fillText('You: '+userPoint.y.toFixed(1)+'%', px + (px>W-140?-12:12), py-12);
+    }
+  }
+
+  render();
+
+  function classifyZone(billings, zoneLow, zoneHigh){
+    if(billings < zoneLow) return 'Junior Volume Zone';
+    if(billings < zoneHigh) return 'Valley Zone';
+    return 'Closer Zone';
+  }
+
+  $('run').addEventListener('click', function(){
+    const base = parseFloat($('base').value) || 0;
+    const cola = parseFloat($('cola').value) || 0;
+    let commission = parseFloat($('commission').value) || 0;
+    const drawNetted = $('drawNetted').checked;
+    const drawDeducted = parseFloat($('drawDeducted').value) || 0;
+    const billings = parseFloat($('billings').value) || 0;
+    const starts = parseFloat($('starts').value) || 0;
+    const falloffClient = parseFloat($('falloffClient').value) || 0;
+    const falloffCandidate = parseFloat($('falloffCandidate').value) || 0;
+    const falloffUnknown = parseFloat($('falloffUnknown').value) || 0;
+    const benchmark = parseFloat($('benchmark').value) || 20;
+    const {zoneLow, zoneHigh} = getZones();
+
+    const m1 = $('m1').checked, m2 = $('m2').checked, m3 = $('m3').checked;
+    const marketSignals = [m1,m2,m3].filter(Boolean).length;
+    const marketFlag = marketSignals >= 2;
+
+    if(billings <= 0){
+      alert('Enter your trailing 12-month billings to run the diagnostic.');
+      return;
+    }
+
+    // Draw adjustment: if not already netted, subtract draw deducted from commission
+    // (i.e. commission entered is gross; real take-home commission is lower)
+    let commissionAdjusted = commission;
+    if(!drawNetted && drawDeducted > 0){
+      commissionAdjusted = commission - drawDeducted;
+    }
+
+    const totalComp = base + cola + commissionAdjusted;
+    const effectivePayout = (totalComp / billings) * 100;
+
+    const totalFalloffs = falloffClient + falloffCandidate + falloffUnknown;
+    const controllableFalloffs = falloffCandidate + falloffUnknown; // recruiter-influenceable
+    const falloffRate = starts > 0 ? (totalFalloffs/starts)*100 : null;
+    const controllableFalloffRate = starts > 0 ? (controllableFalloffs/starts)*100 : null;
+
+    userPoint = {x: billings, y: effectivePayout};
+    render();
+
+    const tags = [];
+    let verdictTitle = '';
+    let verdictBody = '';
+    const subnotes = [];
+
+    const zone = classifyZone(billings, zoneLow, zoneHigh);
+    const belowBenchmark = effectivePayout < benchmark;
+    const aboveMedianBillings = billings >= zoneLow;
+    const controllableFalloffElevated = controllableFalloffRate !== null && controllableFalloffRate > 15;
+
+    let structural = false, market = false, performance = false, pipeline = false, healthy = false;
+
+    if(belowBenchmark && aboveMedianBillings){
+      structural = true;
+    }
+    if(marketFlag){
+      market = true;
+    }
+    if(controllableFalloffElevated){
+      pipeline = true;
+    }
+    if(!belowBenchmark && !controllableFalloffElevated){
+      healthy = true;
+    }
+    if(billings < zoneLow && belowBenchmark){
+      performance = true;
+      structural = false;
+    }
+
+    if(structural) tags.push('<span class="tag structural">Structural</span>');
+    if(market) tags.push('<span class="tag market">Market compression</span>');
+    if(pipeline) tags.push('<span class="tag pipeline">Pipeline quality flag</span>');
+    if(performance) tags.push('<span class="tag performance">Possible ramp / performance</span>');
+    if(healthy && !structural && !pipeline) tags.push('<span class="tag healthy">Within healthy range</span>');
+    $('tags').innerHTML = tags.join('');
+
+    if(structural && market){
+      verdictTitle = "Structural squeeze, compounded by market conditions.";
+      verdictBody = "You're producing at a level that should pay more, and at least two independent market signals point to real fee compression in your vertical — not just a bad year. A lateral move likely just relocates the same structural problem. Ask for a renegotiation of your draw or commission tier before you consider leaving, and if you do look elsewhere, evaluate the target firm's comp curve, not just its headline base.";
+    } else if(structural){
+      verdictTitle = "This reads as a comp structure problem, not a performance one.";
+      verdictBody = "Your billings are solid for the "+zone+", but your draw-adjusted effective payout is below the benchmark you set for your vertical. That usually means the curve itself is designed for junior volume reps or top closers, with a thin middle tier. Before you quit for a higher base elsewhere, try renegotiating your draw, commission tier, or desk split first.";
+    } else if(market && !structural){
+      verdictTitle = "Your payout looks reasonable — the pressure is coming from the market.";
+      verdictBody = "Effective payout is near or above benchmark, but at least two independent signals point to real fee compression in your vertical. Moving firms won't fix shrinking margins across the board — specializing in a higher-margin niche within your vertical is usually the better lever here.";
+    } else if(performance){
+      verdictTitle = "Possible ramp or performance factor — not enough billings yet to isolate the curve.";
+      verdictBody = "At this billings level relative to your vertical's Junior Volume threshold, it's hard to separate a genuine structural problem from being early in your ramp. Focus on deal volume and quality for a couple more quarters, then re-run this diagnostic.";
+    } else {
+      verdictTitle = "Your effective payout is within a healthy range.";
+      verdictBody = "Based on what you've entered, your draw-adjusted comp looks reasonably aligned with your production for your vertical. If you're still feeling underpaid, the gap may be somewhere this tool doesn't measure — title, advancement clarity, or workload. Worth a direct conversation with leadership, but the comp math itself isn't flashing red.";
+    }
+
+    if(!drawNetted && drawDeducted > 0){
+      subnotes.push("Draw adjustment applied: $"+drawDeducted.toLocaleString()+" in draw repayment was subtracted from your entered commission figure to reflect actual take-home, not gross commission earned before clawback.");
+    }
+
+    if(marketSignals === 1){
+      subnotes.push("Only one market-pressure signal was checked. That's treated as anecdotal here, not a confirmed market flag — check more boxes or gather more evidence before leaning on 'the market' as the explanation.");
+    }
+
+    if(falloffClient > 0 && !controllableFalloffElevated && totalFalloffs > 0){
+      subnotes.push("Your client-driven falloffs ("+falloffClient+") aren't counted against your pipeline quality score — those are typically outside a recruiter's control (layoffs, cancelled reqs).");
+    } else if(controllableFalloffElevated){
+      subnotes.push("Candidate-driven and unclear-cause falloffs specifically are elevated ("+controllableFalloffRate.toFixed(0)+"%). That's usually driven by candidate-role mismatch at submission or unclear expectation-setting — worth investigating independent of the comp question.");
+    }
+
+    $('verdict-title').textContent = verdictTitle;
+    $('verdict-body').textContent = verdictBody;
+    $('subnotes').innerHTML = subnotes.map(s=>'<p class="subnote">'+s+'</p>').join('');
+
+    $('stat-payout').textContent = effectivePayout.toFixed(1)+'%';
+    $('stat-falloff').textContent = falloffRate !== null ? falloffRate.toFixed(0)+'%' : '—';
+
+    $('placeholder').style.display = 'none';
+    $('readout').classList.add('show');
+  });
+
+  applyVerticalPreset();
+})();
+</script>
+
+</body>
+</html>
